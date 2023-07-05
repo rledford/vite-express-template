@@ -1,9 +1,18 @@
+import { Router } from 'express';
 import { healthController } from './controllers';
-import { healthService } from './services';
+import { HealthService, healthService } from './services';
 
-export const healthModule = () => {
+interface HealthModule {
+  service: HealthService;
+  controller: Router;
+}
+
+export const healthModule = (): HealthModule => {
   const service = healthService();
   const controller = healthController({ service });
 
-  return controller;
+  return {
+    service,
+    controller
+  };
 };

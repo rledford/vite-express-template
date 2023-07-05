@@ -1,8 +1,9 @@
-import { bootstrap, start } from './app';
+import { initApp } from './app';
 
 const main = async () => {
-  await bootstrap();
-  start();
+  const app = await initApp();
+
+  await app.start();
 };
 
 main();
