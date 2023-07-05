@@ -1,6 +1,6 @@
 import { z } from 'zod';
-import type { JournalEntity } from '../entities';
 
+export type JournalDTO = z.infer<typeof JournalDTOSchema>;
 export const JournalDTOSchema = z.object({
   id: z.string(),
   title: z.string(),
@@ -9,21 +9,6 @@ export const JournalDTOSchema = z.object({
   createdAt: z.string().datetime(),
   updatedAt: z.string().datetime()
 });
-
-export type JournalDTO = z.infer<typeof JournalDTOSchema>;
-export const JournalDTO = {
-  fromEntity(entity: JournalEntity): JournalDTO {
-    const dto = {
-      id: entity._id.toHexString(),
-      ...entity,
-      calendarDate: entity.calendarDate.toISOString(),
-      createdAt: entity.createdAt.toISOString(),
-      updatedAt: entity.updatedAt.toISOString()
-    };
-
-    return JournalDTOSchema.parse(dto);
-  }
-};
 
 export type CreateJournalDTO = z.infer<typeof CreateJournalDTOSchema>;
 export const CreateJournalDTOSchema = z.object({
