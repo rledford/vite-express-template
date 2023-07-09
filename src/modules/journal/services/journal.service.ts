@@ -1,3 +1,5 @@
+import { NotFoundError } from '@/errors';
+import { toObjectId } from '@/utils';
 import { Collection, ObjectId } from 'mongodb';
 import { CreateJournalDTO, JournalDTO, JournalDTOSchema } from '../dtos';
 import { JournalEntity } from '../entities';
@@ -7,11 +9,11 @@ type Deps = {
 };
 
 export type JournalService = {
-  getOne: (id: string | ObjectId) => Promise<JournalDTO>;
-  getMany: () => Promise<Array<JournalDTO>>;
-  create: (dto: CreateJournalDTO) => Promise<JournalDTO>;
-  update: (id: string | ObjectId, dto: CreateJournalDTO) => void;
-  delete: (id: string | ObjectId) => Promise<void>;
+  getOne: (id: string | ObjectId) => Promise<JournalEntity>;
+  getMany: () => Promise<Array<JournalEntity>>;
+  create: (dto: CreateJournalDTO) => Promise<JournalEntity>;
+  updateOne: (id: string | ObjectId, dto: CreateJournalDTO) => void;
+  deleteOne: (id: string | ObjectId) => Promise<void>;
   createDTO: (entity: JournalEntity) => JournalDTO;
   createEntity: (data: Partial<JournalDTO | JournalEntity>) => JournalEntity;
 };
@@ -20,36 +22,34 @@ export const journalService = ({ collection }: Deps): JournalService => {
   return {
     async getOne(id) {
       const result = await collection.findOne({
-        _id: ObjectId.createFromHexString(id.toString())
+        _id: toObjectId(id)
       });
 
-      if (!result) {
-        // TODO: replace with NotFoundException
-        throw new Error('Not found');
-      }
-
-      return this.createDTO(result);
-    },
-
-    async getMany() {
-      const result: Array<JournalDTO> = [];
-      const cursor = collection.find();
-      for await (const doc of cursor) {
-        result.push(this.createDTO(doc));
-      }
+      if (!result) throw new NotFoundError();
 
       return result;
     },
 
-    async create(dto) {
-      const journal = this.createEntity(dto);
+    async getMany() {
+      const cursor = collection.find();
 
-      await collection.insertOne(journal);
+      return new Promise((resolve, reject) => {
+        const result: Array<JournalEntity> = [];
+        const stream = cursor.stream();
 
-      return this.createDTO(journal);
+        stream.on('data', (data) => result.push(data));
+        stream.on('end', () => resolve(result));
+        stream.on('error', reject);
+      });
     },
 
-    async update(id, dto) {
+    async create(dto) {
+      const entity = this.createEntity(dto);
+      await collection.insertOne(entity);
+      return entity;
+    },
+
+    async updateOne(id, dto) {
       const _id = ObjectId.createFromHexString(id.toString());
       await collection.updateOne(
         { _id },
@@ -57,21 +57,19 @@ export const journalService = ({ collection }: Deps): JournalService => {
       );
     },
 
-    async delete(id) {
-      const _id = ObjectId.createFromHexString(id.toString());
+    async deleteOne(id) {
+      const _id = toObjectId(id);
       await collection.deleteOne({ _id });
     },
 
-    createDTO(entity: JournalEntity) {
-      const dto = {
-        id: entity._id.toHexString(),
-        ...entity,
-        calendarDate: entity.calendarDate.toISOString(),
-        createdAt: entity.createdAt.toISOString(),
-        updatedAt: entity.updatedAt.toISOString()
-      };
-
-      return JournalDTOSchema.parse(dto);
+    createDTO(data: JournalEntity) {
+      return JournalDTOSchema.parse({
+        ...data,
+        id: data._id.toHexString(),
+        calendarDate: data.calendarDate.toISOString(),
+        createdAt: data.createdAt.toISOString(),
+        updatedAt: data.updatedAt.toISOString()
+      });
     },
 
     createEntity(data) {

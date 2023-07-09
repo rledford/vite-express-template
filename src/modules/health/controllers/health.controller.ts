@@ -1,4 +1,5 @@
 import { Router } from 'express';
+import { withResData } from '@/utils';
 import type { HealthService } from '../services';
 
 type Deps = {
@@ -8,10 +9,12 @@ type Deps = {
 export const healthController = ({ service }: Deps): Router => {
   const router = Router();
 
-  router.get('/', async (req, res) => {
-    const result = await service.getHealth();
-    res.status(200).json(result);
-  });
+  router.get(
+    '/',
+    withResData(async () => {
+      return service.getHealth();
+    })
+  );
 
   return router;
 };

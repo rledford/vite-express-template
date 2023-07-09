@@ -4,10 +4,15 @@ import cors from 'cors';
 import bodyParser from 'body-parser';
 import { configModule } from '@/modules/config';
 import { createLogger, noopLogger } from '@/utils';
-import { accessLoggerMiddleware } from './middlewares';
+import {
+  accessLoggerMiddleware,
+  errorMiddleware,
+  notFoundMiddleware
+} from './middlewares';
 import { healthModule } from './modules/health';
 import { databaseModule } from './modules/database';
 import { journalModule } from './modules/journal';
+import { createErrorFormatter } from './utils/error-formatter';
 
 export const initApp = async () => {
   const app = express();
@@ -15,6 +20,10 @@ export const initApp = async () => {
   const server = new Server(app);
   const logger =
     config.logLevel !== 'none' ? createLogger(config.logLevel) : noopLogger();
+  const errorFormatter = createErrorFormatter({
+    logger,
+    scrubInternal: config.isProd
+  });
 
   logger.info(`Vite Express Template [ ${config.mode} ]`);
 
@@ -30,6 +39,10 @@ export const initApp = async () => {
 
   app.use('/health', health.controller);
   app.use('/journals', journal.controller);
+
+  app.use(notFoundMiddleware());
+
+  app.use(errorMiddleware({ formatter: errorFormatter }));
 
   return {
     start: async () => {

@@ -1,4 +1,4 @@
-import { withErrorHandling } from '@/utils';
+import { withResData, withResEmpty } from '@/utils';
 import { Router } from 'express';
 import { CreateJournalDTOSchema } from '../dtos';
 import { JournalService } from '../services';
@@ -12,50 +12,40 @@ export const journalController = ({ service }: Deps): Router => {
 
   router.get(
     '/',
-    withErrorHandling(async (req, res) => {
-      const result = await service.getMany();
-
-      res.status(200).json(result);
+    withResData(async () => {
+      return (await service.getMany()).map(service.createDTO);
     })
   );
 
   router.get(
     '/:id',
-    withErrorHandling(async (req, res) => {
-      const result = await service.getOne(req.params.id);
-
-      res.status(200).json(result);
+    withResData(async (req) => {
+      return service.createDTO(await service.getOne(req.params.id));
     })
   );
 
   router.post(
     '/',
-    withErrorHandling(async (req, res) => {
+    withResData(async (req) => {
       const dto = CreateJournalDTOSchema.parse(req.body);
-      const result = await service.create(dto);
-
-      res.status(200).json(result);
+      return service.createDTO(await service.create(dto));
     })
   );
 
   router.put(
     '/:id',
-    withErrorHandling(async (req, res) => {
-      await service.update(
+    withResEmpty(async (req) => {
+      await service.updateOne(
         req.params.id,
         CreateJournalDTOSchema.parse(req.body)
       );
-
-      res.status(204).end();
     })
   );
 
   router.delete(
     '/:id',
-    withErrorHandling(async (req, res) => {
-      await service.delete(req.params.id);
-
-      res.status(204).end();
+    withResEmpty(async (req) => {
+      await service.deleteOne(req.params.id);
     })
   );
 
