@@ -10,7 +10,8 @@ export const errorMiddleware =
   ({ formatter }: Deps) =>
   /* eslint-disable  @typescript-eslint/no-unused-vars*/
   (err: Error, req: Request, res: Response, next: NextFunction) => {
-    const payload = formatter(err);
+    const formattedError = formatter(err);
+    const { statusCode } = formattedError.error;
 
-    res.status(payload.error.statusCode).json(payload);
+    res.status(statusCode).json(formattedError);
   };

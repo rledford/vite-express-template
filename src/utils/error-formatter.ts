@@ -2,21 +2,23 @@ import { nanoid } from 'nanoid';
 import { CustomError } from '@/errors';
 import { ErrorFormatter, Logger } from '@/types';
 
-type Deps = {
+type Config = {
   logger?: Logger;
   scrubInternal?: boolean;
 };
 
 export const createErrorFormatter =
-  ({ logger, scrubInternal }: Deps): ErrorFormatter =>
+  (config?: Config): ErrorFormatter =>
   (err) => {
     const id = nanoid();
     const statusCode = getStatusCode(err);
     const message =
-      statusCode === 500 && scrubInternal ? 'Internal error' : err.message;
+      statusCode === 500 && config?.scrubInternal
+        ? 'Internal error'
+        : err.message;
 
-    if (logger) {
-      logger.error(`Error ${id}\n${err.message}\n${err.stack}`);
+    if (config?.logger) {
+      config.logger.error(`Error ${id}\n${err.message}\n${err.stack}`);
     }
 
     return {

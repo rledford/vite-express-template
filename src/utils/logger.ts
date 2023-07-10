@@ -17,7 +17,6 @@ export const createLogger = (logLevel: LogLevel): Logger =>
   });
 
 export const noopLogger = (): Logger => ({
-  debug: () => undefined,
   info: () => undefined,
   warn: () => undefined,
   error: () => undefined

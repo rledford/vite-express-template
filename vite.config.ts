@@ -19,5 +19,10 @@ export default defineConfig(() => ({
     alias: {
       '@': path.resolve(__dirname, 'src')
     }
+  },
+  test: {
+    include: ['**/*.spec.ts'],
+    globals: true,
+    reporters: ['verbose']
   }
 }));
