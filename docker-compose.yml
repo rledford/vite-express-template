@@ -1,0 +1,22 @@
+version: '3'
+services:
+  pg:
+    image: postgres
+    container_name: pg_notes
+    restart: always
+    environment:
+      POSTGRES_USER: dev
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: notes_app
+    ports:
+      - '5432:5432'
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: pg_admin_notes
+    restart: always
+    environment:
+      PGADMIN_DEFAULT_USER: dev
+      PGADMIN_DEFAULT_EMAIL: dev@dev.com
+      PGADMIN_DEFAULT_PASSWORD: P0stgr3s
+    ports:
+      - '8888:80'
