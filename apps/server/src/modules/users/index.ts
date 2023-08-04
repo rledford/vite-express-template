@@ -11,6 +11,7 @@ export const usersModule = ({ db }: Deps) => {
   const controller = usersController({ service });
 
   return {
+    service,
     controller
   };
 };

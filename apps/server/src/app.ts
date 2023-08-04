@@ -14,6 +14,7 @@ import { databaseModule } from './modules/database';
 import { createErrorFormatter } from './utils/error-formatter';
 import { usersModule } from './modules/users';
 import { notesModule } from './modules/notes';
+import { authModule } from './modules/auth';
 
 export const initApp = async () => {
   const app = express();
@@ -37,8 +38,10 @@ export const initApp = async () => {
 
   const health = healthModule();
   const users = usersModule({ db: database.db });
+  const auth = authModule({ jwtSecret: 'test', usersService: users.service });
   const notes = notesModule();
 
+  app.use('/auth', auth.controller);
   app.use('/health', health.controller);
   app.use('/users', users.controller);
   app.use('/notes', notes.controller);

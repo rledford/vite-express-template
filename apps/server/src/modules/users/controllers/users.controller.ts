@@ -15,11 +15,7 @@ export const usersController = ({ service }: Deps) => {
     withResData(async (req) => {
       const dto = CreateUserSchema.parse(req.body);
 
-      const result = await service.create(dto);
-
-      console.log(result);
-
-      return result;
+      return service.create(dto);
     })
   );
 

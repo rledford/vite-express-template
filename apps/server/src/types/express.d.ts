@@ -1,9 +1,14 @@
+import { AuthToken, BasicCredentials } from '@/modules/auth/types';
+import { UserDTO } from '@/modules/users/dtos';
+
 export {};
 
 declare global {
   namespace Express {
     export interface Request {
-      user?: unknown; // replace with a User type
+      user?: UserDTO;
+      credentials?: BasicCredentials;
+      token?: AuthToken;
     }
     export interface Response {
       data?: unknown;

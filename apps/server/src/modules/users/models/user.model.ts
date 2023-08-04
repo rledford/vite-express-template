@@ -13,6 +13,8 @@ const UserModelSchema = z.object({
 export const Users = (db: Knex) => {
   const table = () => db.table<User>('users');
 
+  db.from('users').join('notes', 'notes.athorid', 'users.id');
+
   return {
     insert: async (user: Partial<User>) => {
       const [result] = await table().insert(user).returning('*');
@@ -24,6 +26,11 @@ export const Users = (db: Knex) => {
     },
     findById: async (id: UserId) => {
       const [user] = await table().where('id', id);
+
+      return user as User;
+    },
+    findByUsername: async (username: string) => {
+      const [user] = await table().where('username', username);
 
       return user as User;
     }

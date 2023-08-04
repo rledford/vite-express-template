@@ -9,7 +9,7 @@ export async function up(knex: Knex): Promise<void> {
     table.timestamps(true, true);
 
     table
-      .foreign('author_id', 'FK__NOTES__USERS')
+      .foreign('author_id', 'fk__notes__users')
       .references('id')
       .inTable('users');
   });
