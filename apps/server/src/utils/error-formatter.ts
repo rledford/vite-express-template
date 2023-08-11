@@ -7,6 +7,8 @@ type Config = {
   scrubInternal?: boolean;
 };
 
+// TODO: add zod error handling to return cleaner messages
+
 export const createErrorFormatter =
   (config?: Config): ErrorFormatter =>
   (err) => {
