@@ -34,12 +34,12 @@ export const authService = ({ repository, jwtSecret }: Deps): AuthService => {
       const userWithCredential = await repository.findUserWithCredential(
         credentials.username
       );
-      try {
+
+      // TODO: compare hashed password with credential before signing
+      if (userWithCredential?.credential.hash === credentials.password)
         return sign(TokenClaimsSchema.parse(userWithCredential));
-      } catch (err) {
-        // TODO: log error
-        throw new UnauthorizedError();
-      }
+
+      throw new UnauthorizedError();
     },
     sign,
     verify: (token) => {

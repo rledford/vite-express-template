@@ -2,7 +2,6 @@ import { Database, UserCredential } from '@/modules/database/types';
 import { User } from '../database/types/user.table';
 import { NewUserDTO } from './dtos';
 import { InternalError } from '@/errors';
-import { VerifyUserArgs } from '@/types';
 
 type Deps = {
   db: Database;

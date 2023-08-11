@@ -6,6 +6,7 @@ export {};
 declare global {
   namespace Express {
     export interface Request {
+      // TODO: change to claims
       user?: UserDTO;
       token?: AuthToken;
     }

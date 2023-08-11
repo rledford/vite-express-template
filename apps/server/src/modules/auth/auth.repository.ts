@@ -17,6 +17,7 @@ export interface AuthRepository {
 
 export const authRepository = ({ db }: Deps): AuthRepository => {
   return {
+    // TODO: find by username AND hash
     findUserWithCredential: async (username) => {
       const user = await db
         .selectFrom('user')
