@@ -15,12 +15,13 @@ export const configModule = (): ConfigModule => {
     mode: env.NODE_ENV,
     port: env.PORT,
     db: {
-      type: env.DB_TYPE,
+      database: env.DB_DATABASE,
       host: env.DB_HOST,
       port: env.DB_PORT,
       user: env.DB_USER,
       password: env.DB_PASS,
-      database: env.DB_DATABASE
+      min: env.DB_MIN_POOL_SIZE,
+      max: env.DB_MAX_POOL_SIZE
     },
     isProd: env.NODE_ENV === 'production',
     isDev: env.NODE_ENV === 'development'

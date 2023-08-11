@@ -1,11 +1,12 @@
-import { UserSchema } from '@/modules/users/dtos';
 import { z } from 'zod';
+import { UserDTO } from '@/modules/user/dtos';
+import { User, UserCredential } from '@/modules/database/types';
 
+export type UserWithCredential = User & { credential: UserCredential };
 export type AuthToken = string;
 export type TokenClaims = z.infer<typeof TokenClaimsSchema>;
-export const TokenClaimsSchema = z.object({
-  user: UserSchema
-});
+// TODO: Use separate claims DTO
+export const TokenClaimsSchema = UserDTO;
 
 export type BasicCredentials = z.infer<typeof BasicCredentialsSchema>;
 export const BasicCredentialsSchema = z.object({

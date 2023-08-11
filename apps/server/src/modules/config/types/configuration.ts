@@ -1,12 +1,12 @@
 import { EnvMode } from './env';
-import { DbConfig } from './db';
+import { DatabaseConfig } from './db';
 import { LogLevel } from './log';
 
 export interface Config {
   logLevel: LogLevel;
   mode: EnvMode;
   port: number;
-  db: DbConfig;
+  db: DatabaseConfig;
   isProd: boolean;
   isDev: boolean;
 }

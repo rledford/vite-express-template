@@ -1,23 +1,36 @@
-import { jwtStrategy } from './strategies/jwt.strategy';
-import { basicStrategy } from './strategies';
-import { authController } from './controllers';
-import { UsersService } from '../users/services';
+import { Database } from '../database/types';
+import { AuthController, authController } from './auth.controller';
+import { authRepository } from './auth.repository';
+import { authService } from './auth.service';
+import { Middleware } from '@/types';
+import { jwtGuard } from './guards';
 
 type Deps = {
+  db: Database;
   jwtSecret: string;
-  usersService: UsersService;
 };
 
-export const authModule = ({ jwtSecret, usersService }: Deps) => {
-  const strategies = {
-    jwtStrategy: jwtStrategy({ jwtSecret, usersService }),
-    basicStrategy: basicStrategy({ usersService })
+interface AuthModule {
+  controller: AuthController;
+  guards: {
+    jwt: Middleware;
   };
+}
 
-  const controller = authController({ strategies, usersService });
+export const authModule = ({ db, jwtSecret }: Deps): AuthModule => {
+  const repository = authRepository({ db });
+  const service = authService({ repository, jwtSecret });
+  const jwt = jwtGuard({ verify: service.verify });
+
+  const controller = authController({
+    service,
+    jwt
+  });
 
   return {
     controller,
-    strategies
+    guards: {
+      jwt
+    }
   };
 };

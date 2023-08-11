@@ -2,7 +2,6 @@ import { Server } from 'http';
 import express from 'express';
 import cors from 'cors';
 import bodyParser from 'body-parser';
-import { configModule } from '@/modules/config';
 import { createLogger, noopLogger } from '@/utils';
 import {
   accessLoggerMiddleware,
@@ -10,15 +9,18 @@ import {
   notFoundMiddleware
 } from './middlewares';
 import { healthModule } from './modules/health';
+import { userModule } from './modules/user';
 import { databaseModule } from './modules/database';
 import { createErrorFormatter } from './utils/error-formatter';
-import { usersModule } from './modules/users';
-import { notesModule } from './modules/notes';
+import { Config } from './modules/config/types';
 import { authModule } from './modules/auth';
 
-export const initApp = async () => {
+type Deps = {
+  config: Config;
+};
+
+export const initApp = async ({ config }: Deps) => {
   const app = express();
-  const config = configModule().get();
   const server = new Server(app);
   const logger =
     config.logLevel !== 'none' ? createLogger(config.logLevel) : noopLogger();
@@ -29,22 +31,26 @@ export const initApp = async () => {
 
   logger.info(`Vite Express Template [ ${config.mode} ]`);
 
-  const database = databaseModule({ config: config, logger });
+  const database = databaseModule({ config: config.db, logger });
 
   app.use(cors());
   app.use(bodyParser.json());
   app.use(bodyParser.urlencoded({ extended: true }));
   app.use(accessLoggerMiddleware());
 
-  const health = healthModule();
-  const users = usersModule({ db: database.db });
-  const auth = authModule({ jwtSecret: 'test', usersService: users.service });
-  const notes = notesModule();
+  const auth = authModule({
+    db: database.db,
+    jwtSecret: 'test'
+  });
 
-  app.use('/auth', auth.controller);
+  const health = healthModule();
+  const users = userModule({ db: database.db });
+  // const notes = notesModule();
+
+  app.use('/', auth.controller);
   app.use('/health', health.controller);
   app.use('/users', users.controller);
-  app.use('/notes', notes.controller);
+  // app.use('/notes', notes.controller);
 
   app.use(notFoundMiddleware());
 
