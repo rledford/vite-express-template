@@ -1,29 +1,29 @@
 import { Router } from 'express';
 import { withResData } from '@/utils';
 import { UserService } from './user.service';
-import { UserDTO } from './dtos';
+import { Middleware } from '@/types';
+import { PublicUser } from './models';
 
 type Deps = {
   service: UserService;
+  jwt: Middleware;
 };
 
 export type userController = Router;
 
-export const userController = ({ service }: Deps): Router => {
+export const userController = ({ service, jwt }: Deps): Router => {
   const router = Router();
+
+  router.use(jwt);
 
   router.get(
     '/',
-    // TODO: protect endpoint
-    withResData(async () => {
-      return (await service.getAll()).map((user) => UserDTO.parse(user));
-    })
+    withResData(PublicUser)(async () => service.getAll())
   );
 
   router.get(
     '/:id',
-    // TODO: protect endpoint
-    withResData(async (req) => {
+    withResData(PublicUser)(async (req) => {
       return service.getOneById(Number(req.params.id));
     })
   );

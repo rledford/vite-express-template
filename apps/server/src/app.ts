@@ -44,7 +44,7 @@ export const initApp = async ({ config }: Deps) => {
   });
 
   const health = healthModule();
-  const users = userModule({ db: database.db });
+  const users = userModule({ db: database.db, jwt: auth.guards.jwt });
   // const notes = notesModule();
 
   app.use('/', auth.controller);

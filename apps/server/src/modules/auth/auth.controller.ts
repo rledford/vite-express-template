@@ -2,8 +2,8 @@ import { Router } from 'express';
 import { withResData } from '@/utils';
 import { getBasicCredentials } from './utils';
 import { AuthService } from './auth.service';
-import { BasicCredentialsSchema, TokenClaims } from './types';
 import { Middleware } from '@/types';
+import { BasicCredentials, TokenPayload, UserClaims } from './models';
 
 type Deps = {
   service: AuthService;
@@ -18,32 +18,25 @@ export const authController = ({ service, jwt }: Deps) => {
   router.get(
     '/me',
     jwt,
-    withResData(async (req) => {
-      // TODO: change express.d.ts to use `claims` instead of `user`
-      return req.user;
+    withResData(UserClaims)(async (req) => {
+      return req.claims;
     })
   );
 
   router.post(
     '/login',
-    withResData(async (req) => {
+    withResData(TokenPayload)(async (req) => {
       const token = await service.authenticate(getBasicCredentials(req));
 
-      // TODO: use DTO schema parse
       return { token };
     })
   );
 
   router.post(
     '/register',
-    withResData(async (req) => {
-      const user = await service.register(
-        BasicCredentialsSchema.parse(req.body)
-      );
+    withResData(TokenPayload)(async (req) => {
+      const token = await service.register(BasicCredentials.parse(req.body));
 
-      const token = service.sign(user as unknown as TokenClaims);
-
-      // TODO: use DTO schema parse
       return { token };
     })
   );

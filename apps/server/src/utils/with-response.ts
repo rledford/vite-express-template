@@ -1,5 +1,5 @@
-import { NotFoundError } from '@/errors';
 import type { NextFunction, Request, Response } from 'express';
+import { z } from 'zod';
 
 type WithResponse = <T>(handler: AsyncHandler<T>) => WrappedHandler;
 type AsyncHandler<T> = (req: Request, res?: Response) => Promise<T>;
@@ -9,19 +9,23 @@ type WrappedHandler = (
   next: NextFunction
 ) => Promise<void>;
 
-export const withResData: WithResponse =
-  (handler) => async (req, res, next) => {
+export const withResData = <T extends z.AnyZodObject>(
+  schema: T
+): WithResponse => {
+  return (handler) => async (req, res, next) => {
     try {
-      const data = await handler(req, res);
-      const hasData = Array.isArray(data) || !!data;
+      const result = await handler(req, res);
 
-      if (!hasData) throw new NotFoundError();
+      const data = await (Array.isArray(result)
+        ? Promise.all(result.map(async (d) => await schema.parseAsync(d)))
+        : schema.parseAsync(result));
 
       res.status(200).json({ data });
     } catch (err) {
       next(err);
     }
   };
+};
 
 export const withResEmpty: WithResponse =
   (handler) => async (req, res, next) => {

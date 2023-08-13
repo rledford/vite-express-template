@@ -1,14 +1,12 @@
-import { AuthToken } from '@/modules/auth/types';
-import { UserDTO } from '@/modules/user/dtos';
+import { UserClaims } from '@/modules/auth/models';
 
 export {};
 
 declare global {
   namespace Express {
     export interface Request {
-      // TODO: change to claims
-      user?: UserDTO;
-      token?: AuthToken;
+      claims?: UserClaims;
+      token?: string;
     }
     export interface Response {
       data?: unknown;

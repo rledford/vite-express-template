@@ -2,12 +2,13 @@ import jwt from 'jsonwebtoken';
 import { UnauthorizedError } from '@/errors';
 import { AuthRepository } from './auth.repository';
 import {
-  AuthToken,
   BasicCredentials,
-  TokenClaims,
-  TokenClaimsSchema
-} from './types';
-import { User } from '../database/types';
+  JWT,
+  SignClaimsFn,
+  UserClaims,
+  VerifyJWTFn
+} from './models';
+import { hash } from './utils';
 
 type Deps = {
   repository: AuthRepository;
@@ -15,44 +16,47 @@ type Deps = {
 };
 
 export interface AuthService {
-  authenticate: (credentials: BasicCredentials) => Promise<AuthToken>;
-  sign: (claims: TokenClaims) => AuthToken;
-  verify: (token: AuthToken) => TokenClaims;
-  register: (credentials: BasicCredentials) => Promise<User>;
+  authenticate: (credentials: BasicCredentials) => Promise<JWT>;
+  sign: SignClaimsFn;
+  verify: VerifyJWTFn;
+  register: (reg: BasicCredentials) => Promise<JWT>;
 }
 
 export const authService = ({ repository, jwtSecret }: Deps): AuthService => {
-  const sign = (claims: TokenClaims) =>
+  const sign = (claims: UserClaims) =>
     jwt.sign(claims, jwtSecret, {
       expiresIn: '1h'
     });
-  const verify = (token: AuthToken) =>
-    TokenClaimsSchema.parse(jwt.verify(token, jwtSecret));
+
+  const verify = (token: JWT) => UserClaims.parse(jwt.verify(token, jwtSecret));
 
   return {
-    authenticate: async (credentials) => {
-      const userWithCredential = await repository.findUserWithCredential(
-        credentials.username
-      );
-
-      // TODO: compare hashed password with credential before signing
-      if (userWithCredential?.credential.hash === credentials.password)
-        return sign(TokenClaimsSchema.parse(userWithCredential));
-
-      throw new UnauthorizedError();
-    },
     sign,
     verify: (token) => {
       try {
-        return verify(token);
+        return UserClaims.parse(verify(token));
       } catch (err) {
         console.log(err);
-        throw new UnauthorizedError();
+        throw new UnauthorizedError('Invalid token');
       }
     },
-    register: async (credentials) => {
-      // TODO: hash password before inserting
-      return repository.insertUserWithCredential(credentials);
+    authenticate: async ({ username, password }) => {
+      const pwd = await hash(password);
+      const user = await repository.findByCredentials({ username, hash: pwd });
+
+      if (!user) throw new UnauthorizedError();
+
+      return sign(UserClaims.parse(user));
+    },
+    register: async ({ username, password }) => {
+      const pwd = await hash(password);
+
+      const user = await repository.insert({
+        username,
+        hash: pwd
+      });
+
+      return sign(UserClaims.parse(user));
     }
   };
 };

@@ -6,10 +6,10 @@ import {
   Updateable
 } from 'kysely';
 
-// TODO: change User to UserAccount which stores username, hash, lastLogin, failedLoginCount, etc
 export interface UserTable {
   id: Generated<number>;
   username: string;
+  hash: string;
   createdAt: ColumnType<Date, string | undefined, never>;
   updateAt: ColumnType<Date, string | undefined, never>;
 }

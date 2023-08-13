@@ -1,6 +1,6 @@
-import { BadRequestError } from '@/errors';
-import { BasicCredentials } from '@/modules/auth/types';
 import { Request } from 'express';
+import { BadRequestError, UnauthorizedError } from '@/errors';
+import { BasicCredentials, JWT } from '../models';
 
 export const getBasicCredentials = (req: Request): BasicCredentials => {
   const basic =
@@ -10,16 +10,19 @@ export const getBasicCredentials = (req: Request): BasicCredentials => {
     .toString()
     .split(':');
 
-  if (!username || !password) throw new BadRequestError('Missing credentials');
+  const credentials = BasicCredentials.safeParse({ username, password });
 
-  return { username, password };
+  if (!credentials.success) throw new BadRequestError('Missing credentials');
+
+  return credentials.data;
 };
 
-export const getBearerToken = (req: Request) => {
-  const token =
-    req.headers.authorization?.replace(/^bearer\s/i, '').trim() || '';
+export const getBearerToken = (req: Request): JWT => {
+  const token = JWT.safeParse(
+    req.headers.authorization?.replace(/^bearer\s/i, '').trim() || ''
+  );
 
-  if (!token) throw new BadRequestError('Missing token');
+  if (!token.success) throw new UnauthorizedError('Missing token');
 
-  return token;
+  return token.data;
 };
