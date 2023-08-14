@@ -12,9 +12,9 @@
     "build": "vite build",
     "test": "vitest run",
     "lint": "pnpm eslint --fix",
-    "migrate:up": "ts-node ./bin/migrator up",
-    "migrate:down": "ts-node ./bin/migrator down",
-    "migrate:latest": "ts-node ./bin/migrator latest"
+    "migrate:up": "tsx ./bin/migrator up",
+    "migrate:down": "tsx ./bin/migrator down",
+    "migrate:latest": "tsx ./bin/migrator latest"
   },
   "license": "ISC",
   "dependencies": {
@@ -46,8 +46,8 @@
     "concurrently": "8.0.1",
     "eslint": "8.39.0",
     "nodemon": "2.0.22",
-    "ts-node": "10.9.1",
     "tslib": "2.5.0",
+    "tsx": "^3.12.7",
     "typescript": "5.0.4",
     "vite": "4.3.1",
     "vite-plugin-node": "3.0.2",
