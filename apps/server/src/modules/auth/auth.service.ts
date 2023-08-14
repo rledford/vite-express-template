@@ -38,7 +38,6 @@ export const authService = ({ repository, jwtSecret }: Deps): AuthService => {
       try {
         return UserClaimsSchema.parse(verify(token));
       } catch (err) {
-        console.log(err);
         throw new UnauthorizedError('Invalid token');
       }
     },

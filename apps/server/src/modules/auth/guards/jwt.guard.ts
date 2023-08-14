@@ -15,7 +15,6 @@ export const jwtGuard = ({ verify }: Deps): Middleware => {
       next();
     } catch (err) {
       // TODO: use logger
-      console.log(err);
       next(err);
     }
   };
