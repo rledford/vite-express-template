@@ -14,6 +14,7 @@ export const configModule = (): ConfigModule => {
     logLevel: env.LOG_LEVEL,
     mode: env.NODE_ENV,
     port: env.PORT,
+    jwtSecret: env.JWT_SECRET,
     db: {
       database: env.DB_DATABASE,
       host: env.DB_HOST,

@@ -41,7 +41,7 @@ export const initApp = async ({ config }: Deps) => {
 
   const auth = authModule({
     db: database.db,
-    jwtSecret: 'test'
+    jwtSecret: config.jwtSecret
   });
 
   const health = healthModule();
