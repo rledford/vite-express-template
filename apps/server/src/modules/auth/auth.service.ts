@@ -5,8 +5,8 @@ import {
   BasicCredential,
   JWT,
   SignClaimsFn,
-  UserClaim,
-  UserClaimSchema,
+  UserClaims,
+  UserClaimsSchema,
   VerifyJWTFn
 } from './models';
 import { hash } from './utils';
@@ -24,19 +24,19 @@ export interface AuthService {
 }
 
 export const authService = ({ repository, jwtSecret }: Deps): AuthService => {
-  const sign = (claims: UserClaim) =>
+  const sign = (claims: UserClaims) =>
     jwt.sign(claims, jwtSecret, {
       expiresIn: '1h'
     });
 
   const verify = (token: JWT) =>
-    UserClaimSchema.parse(jwt.verify(token, jwtSecret));
+    UserClaimsSchema.parse(jwt.verify(token, jwtSecret));
 
   return {
     sign,
     verify: (token) => {
       try {
-        return UserClaimSchema.parse(verify(token));
+        return UserClaimsSchema.parse(verify(token));
       } catch (err) {
         console.log(err);
         throw new UnauthorizedError('Invalid token');
@@ -48,7 +48,7 @@ export const authService = ({ repository, jwtSecret }: Deps): AuthService => {
 
       if (!user) throw new UnauthorizedError();
 
-      return sign(UserClaimSchema.parse(user));
+      return sign(UserClaimsSchema.parse(user));
     },
     register: async ({ username, password }) => {
       const pwd = await hash(password);
@@ -58,7 +58,7 @@ export const authService = ({ repository, jwtSecret }: Deps): AuthService => {
         hash: pwd
       });
 
-      return sign(UserClaimSchema.parse(user));
+      return sign(UserClaimsSchema.parse(user));
     }
   };
 };

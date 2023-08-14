@@ -1,7 +1,7 @@
 import { z } from 'zod';
 
-export type UserClaim = z.infer<typeof UserClaimSchema>;
-export const UserClaimSchema = z.object({
+export type UserClaims = z.infer<typeof UserClaimsSchema>;
+export const UserClaimsSchema = z.object({
   id: z.number().int(),
   username: z.string().nonempty()
 });
@@ -31,11 +31,11 @@ export const TokenPayloadSchema = z.object({
 export type SignClaimsFn = z.infer<typeof SignClaimsFn>;
 export const SignClaimsFn = z
   .function()
-  .args(UserClaimSchema)
+  .args(UserClaimsSchema)
   .returns(JWTSchema);
 
 export type VerifyJWTFn = z.infer<typeof VerifyJWTFn>;
 export const VerifyJWTFn = z
   .function()
   .args(JWTSchema)
-  .returns(UserClaimSchema);
+  .returns(UserClaimsSchema);

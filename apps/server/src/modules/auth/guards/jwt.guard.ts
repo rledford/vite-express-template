@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from 'express';
 import { Middleware } from '@/types';
 import { getBearerToken } from '../utils';
-import { UserClaimSchema, VerifyJWTFn } from '../models';
+import { UserClaimsSchema, VerifyJWTFn } from '../models';
 
 type Deps = {
   verify: VerifyJWTFn;
@@ -10,7 +10,7 @@ type Deps = {
 export const jwtGuard = ({ verify }: Deps): Middleware => {
   return async (req: Request, res: Response, next: NextFunction) => {
     try {
-      req.claims = UserClaimSchema.parse(verify(getBearerToken(req)));
+      req.claims = UserClaimsSchema.parse(verify(getBearerToken(req)));
 
       next();
     } catch (err) {

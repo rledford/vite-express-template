@@ -5,7 +5,7 @@ import { AuthService } from './auth.service';
 import { Middleware } from '@/types';
 import {
   TokenPayloadSchema,
-  UserClaimSchema,
+  UserClaimsSchema,
   UserRegistrationSchema
 } from './models';
 import { validateMiddleware } from '@/middlewares';
@@ -23,7 +23,7 @@ export const authController = ({ service, jwt }: Deps) => {
   router.get(
     '/me',
     jwt,
-    withResData(UserClaimSchema)(async (req) => {
+    withResData(UserClaimsSchema)(async (req) => {
       return req.claims;
     })
   );
