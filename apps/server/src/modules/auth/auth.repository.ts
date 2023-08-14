@@ -1,5 +1,5 @@
 import { Database, User } from '../database/types';
-import { UserCredentials } from './models';
+import type { UserCredentials } from './models';
 
 type Deps = {
   db: Database;

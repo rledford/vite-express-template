@@ -17,10 +17,10 @@ type Deps = {
 };
 
 export interface AuthService {
-  authenticate: (credentials: BasicCredential) => Promise<JWT>;
   sign: SignClaimsFn;
   verify: VerifyJWTFn;
   register: (reg: BasicCredential) => Promise<JWT>;
+  authenticate: (credentials: BasicCredential) => Promise<JWT>;
 }
 
 export const authService = ({ repository, jwtSecret }: Deps): AuthService => {
@@ -42,14 +42,6 @@ export const authService = ({ repository, jwtSecret }: Deps): AuthService => {
         throw new UnauthorizedError('Invalid token');
       }
     },
-    authenticate: async ({ username, password }) => {
-      const pwd = await hash(password);
-      const user = await repository.findByCredentials({ username, hash: pwd });
-
-      if (!user) throw new UnauthorizedError();
-
-      return sign(UserClaimsSchema.parse(user));
-    },
     register: async ({ username, password }) => {
       const pwd = await hash(password);
 
@@ -57,6 +49,14 @@ export const authService = ({ repository, jwtSecret }: Deps): AuthService => {
         username,
         hash: pwd
       });
+
+      return sign(UserClaimsSchema.parse(user));
+    },
+    authenticate: async ({ username, password }) => {
+      const pwd = await hash(password);
+      const user = await repository.findByCredentials({ username, hash: pwd });
+
+      if (!user) throw new UnauthorizedError();
 
       return sign(UserClaimsSchema.parse(user));
     }

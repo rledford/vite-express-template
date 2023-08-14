@@ -6,8 +6,8 @@ export const UserClaimsSchema = z.object({
   username: z.string().nonempty()
 });
 
-export type UserCredential = z.infer<typeof UserCredentialSchema>;
-export const UserCredentialSchema = z.object({
+export type UserCredentials = z.infer<typeof UserCredentialsSchema>;
+export const UserCredentialsSchema = z.object({
   username: z.string().nonempty(),
   hash: z.string().nonempty()
 });
