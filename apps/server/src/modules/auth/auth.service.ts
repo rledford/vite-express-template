@@ -2,10 +2,11 @@ import jwt from 'jsonwebtoken';
 import { UnauthorizedError } from '@/errors';
 import { AuthRepository } from './auth.repository';
 import {
-  BasicCredentials,
+  BasicCredential,
   JWT,
   SignClaimsFn,
-  UserClaims,
+  UserClaim,
+  UserClaimSchema,
   VerifyJWTFn
 } from './models';
 import { hash } from './utils';
@@ -16,25 +17,26 @@ type Deps = {
 };
 
 export interface AuthService {
-  authenticate: (credentials: BasicCredentials) => Promise<JWT>;
+  authenticate: (credentials: BasicCredential) => Promise<JWT>;
   sign: SignClaimsFn;
   verify: VerifyJWTFn;
-  register: (reg: BasicCredentials) => Promise<JWT>;
+  register: (reg: BasicCredential) => Promise<JWT>;
 }
 
 export const authService = ({ repository, jwtSecret }: Deps): AuthService => {
-  const sign = (claims: UserClaims) =>
+  const sign = (claims: UserClaim) =>
     jwt.sign(claims, jwtSecret, {
       expiresIn: '1h'
     });
 
-  const verify = (token: JWT) => UserClaims.parse(jwt.verify(token, jwtSecret));
+  const verify = (token: JWT) =>
+    UserClaimSchema.parse(jwt.verify(token, jwtSecret));
 
   return {
     sign,
     verify: (token) => {
       try {
-        return UserClaims.parse(verify(token));
+        return UserClaimSchema.parse(verify(token));
       } catch (err) {
         console.log(err);
         throw new UnauthorizedError('Invalid token');
@@ -46,7 +48,7 @@ export const authService = ({ repository, jwtSecret }: Deps): AuthService => {
 
       if (!user) throw new UnauthorizedError();
 
-      return sign(UserClaims.parse(user));
+      return sign(UserClaimSchema.parse(user));
     },
     register: async ({ username, password }) => {
       const pwd = await hash(password);
@@ -56,7 +58,7 @@ export const authService = ({ repository, jwtSecret }: Deps): AuthService => {
         hash: pwd
       });
 
-      return sign(UserClaims.parse(user));
+      return sign(UserClaimSchema.parse(user));
     }
   };
 };

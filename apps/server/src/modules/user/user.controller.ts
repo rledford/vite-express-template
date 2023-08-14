@@ -2,7 +2,7 @@ import { Router } from 'express';
 import { withResData } from '@/utils';
 import { UserService } from './user.service';
 import { Middleware } from '@/types';
-import { PublicUser } from './models';
+import { PublicUserSchema } from './models';
 
 type Deps = {
   service: UserService;
@@ -16,14 +16,11 @@ export const userController = ({ service, jwt }: Deps): Router => {
 
   router.use(jwt);
 
-  router.get(
-    '/',
-    withResData(PublicUser)(async () => service.getAll())
-  );
+  router.get('/', withResData(PublicUserSchema)(service.getAll));
 
   router.get(
     '/:id',
-    withResData(PublicUser)(async (req) => {
+    withResData(PublicUserSchema)(async (req) => {
       return service.getOneById(Number(req.params.id));
     })
   );

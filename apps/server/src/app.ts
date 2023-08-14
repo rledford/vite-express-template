@@ -8,12 +8,13 @@ import {
   errorMiddleware,
   notFoundMiddleware
 } from './middlewares';
-import { healthModule } from './modules/health';
-import { userModule } from './modules/user';
 import { databaseModule } from './modules/database';
+import { healthModule } from './modules/health';
+import { authModule } from './modules/auth';
+import { userModule } from './modules/user';
+import { noteModule } from './modules/note';
 import { createErrorFormatter } from './utils/error-formatter';
 import { Config } from './modules/config/types';
-import { authModule } from './modules/auth';
 
 type Deps = {
   config: Config;
@@ -44,13 +45,13 @@ export const initApp = async ({ config }: Deps) => {
   });
 
   const health = healthModule();
-  const users = userModule({ db: database.db, jwt: auth.guards.jwt });
-  // const notes = notesModule();
+  const user = userModule({ db: database.db, jwt: auth.guards.jwt });
+  const note = noteModule({ db: database.db, jwt: auth.guards.jwt });
 
   app.use('/', auth.controller);
   app.use('/health', health.controller);
-  app.use('/users', users.controller);
-  // app.use('/notes', notes.controller);
+  app.use('/users', user.controller);
+  app.use('/notes', note.controller);
 
   app.use(notFoundMiddleware());
 

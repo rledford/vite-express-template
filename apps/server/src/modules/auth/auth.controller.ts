@@ -3,7 +3,12 @@ import { withResData } from '@/utils';
 import { getBasicCredentials } from './utils';
 import { AuthService } from './auth.service';
 import { Middleware } from '@/types';
-import { BasicCredentials, TokenPayload, UserClaims } from './models';
+import {
+  TokenPayloadSchema,
+  UserClaimSchema,
+  UserRegistrationSchema
+} from './models';
+import { validateMiddleware } from '@/middlewares';
 
 type Deps = {
   service: AuthService;
@@ -18,14 +23,14 @@ export const authController = ({ service, jwt }: Deps) => {
   router.get(
     '/me',
     jwt,
-    withResData(UserClaims)(async (req) => {
+    withResData(UserClaimSchema)(async (req) => {
       return req.claims;
     })
   );
 
   router.post(
     '/login',
-    withResData(TokenPayload)(async (req) => {
+    withResData(TokenPayloadSchema)(async (req) => {
       const token = await service.authenticate(getBasicCredentials(req));
 
       return { token };
@@ -34,8 +39,9 @@ export const authController = ({ service, jwt }: Deps) => {
 
   router.post(
     '/register',
-    withResData(TokenPayload)(async (req) => {
-      const token = await service.register(BasicCredentials.parse(req.body));
+    validateMiddleware(UserRegistrationSchema),
+    withResData(TokenPayloadSchema)(async (req) => {
+      const token = await service.register(req.body);
 
       return { token };
     })

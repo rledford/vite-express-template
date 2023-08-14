@@ -1,11 +1,11 @@
-import { UserClaims } from '@/modules/auth/models';
+import { UserClaim } from '@/modules/auth/models';
 
 export {};
 
 declare global {
   namespace Express {
     export interface Request {
-      claims?: UserClaims;
+      claims?: UserClaim;
       token?: string;
     }
     export interface Response {
