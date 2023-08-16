@@ -1,15 +1,17 @@
+import { z } from 'zod';
 import { nanoid } from 'nanoid';
-import { CustomError } from '@/errors';
-import { ErrorFormatter, Logger } from '@/types';
+import { CustomError } from '@/platform/error';
+import { AppLogger } from '@/platform/logger';
 
 type Config = {
-  logger?: Logger;
+  logger?: AppLogger;
   scrubInternal?: boolean;
 };
 
 // TODO: add zod error handling to return cleaner messages
+export type ErrorFormatter = (error: Error | CustomError) => FormattedError;
 
-export const createErrorFormatter =
+export const errorFormatter =
   (config?: Config): ErrorFormatter =>
   (err) => {
     const id = nanoid();
@@ -31,6 +33,15 @@ export const createErrorFormatter =
       }
     };
   };
+
+export type FormattedError = z.infer<typeof FormattedErrorSchema>;
+export const FormattedErrorSchema = z.object({
+  error: z.object({
+    id: z.string(),
+    statusCode: z.number().gte(400).default(500),
+    message: z.string().default('An error occurred')
+  })
+});
 
 const getStatusCode = (err: Error | CustomError) => {
   if (err instanceof CustomError) {

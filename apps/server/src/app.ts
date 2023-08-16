@@ -2,37 +2,37 @@ import { Server } from 'http';
 import express from 'express';
 import cors from 'cors';
 import bodyParser from 'body-parser';
-import { createLogger, noopLogger } from '@/utils';
+import { platformDatabase } from './platform/database';
+import { AppConfig, DatabaseConfig } from './platform/config/config.schema';
+import { errorFormatter } from './utils/error-formatter';
 import {
   accessLoggerMiddleware,
   errorMiddleware,
   notFoundMiddleware
-} from './middlewares';
-import { databaseModule } from './modules/database';
-import { healthModule } from './modules/health';
-import { authModule } from './modules/auth';
-import { userModule } from './modules/user';
-import { noteModule } from './modules/note';
-import { createErrorFormatter } from './utils/error-formatter';
-import { Config } from './modules/config/types';
+} from './middleware';
+import { healthModule } from './feature/health';
+import { authModule } from './feature/auth';
+import { userModule } from './feature/user';
+import { noteModule } from './feature/note';
+import { appLogger } from './platform/logger';
 
 type Deps = {
-  config: Config;
+  config: {
+    app: AppConfig;
+    db: DatabaseConfig;
+  };
 };
 
 export const initApp = async ({ config }: Deps) => {
   const app = express();
   const server = new Server(app);
-  const logger =
-    config.logLevel !== 'none' ? createLogger(config.logLevel) : noopLogger();
-  const errorFormatter = createErrorFormatter({
-    logger,
-    scrubInternal: config.isProd
-  });
+  const logger = appLogger(config.app.logLevel);
 
-  logger.info(`Vite Express Template [ ${config.mode} ]`);
+  logger.info(`Vite Express Template [ ${config.app.mode} ]`);
 
-  const database = databaseModule({ config: config.db, logger });
+  const database = platformDatabase({ config: config.db, logger });
+
+  await database.connect();
 
   app.use(cors());
   app.use(bodyParser.json());
@@ -41,7 +41,7 @@ export const initApp = async ({ config }: Deps) => {
 
   const auth = authModule({
     db: database.db,
-    jwtSecret: config.jwtSecret
+    jwtSecret: config.app.jwtSecret
   });
 
   const health = healthModule();
@@ -55,12 +55,19 @@ export const initApp = async ({ config }: Deps) => {
 
   app.use(notFoundMiddleware());
 
-  app.use(errorMiddleware({ formatter: errorFormatter }));
+  app.use(
+    errorMiddleware({
+      formatError: errorFormatter({
+        logger,
+        scrubInternal: config.app.isProd
+      })
+    })
+  );
 
   return {
     start: async () => {
-      server.listen(config.port, () => {
-        logger.info(`Listening on port ${config.port}`);
+      server.listen(config.app.port, () => {
+        logger.info(`Listening on port ${config.app.port}`);
       });
     },
     stop: async () => {
