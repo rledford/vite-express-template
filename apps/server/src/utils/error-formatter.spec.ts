@@ -4,13 +4,13 @@ import {
   InternalError,
   NotFoundError,
   UnauthorizedError
-} from '@/errors';
+} from '@/platform/error';
 import { loggerSpy } from '@/test/spies';
-import { createErrorFormatter } from './error-formatter';
+import { errorFormatter } from './error-formatter';
 
 describe('errorFormatter', () => {
   describe('status codes', () => {
-    const formatter = createErrorFormatter();
+    const formatError = errorFormatter();
 
     it.each`
       error                      | expected
@@ -23,23 +23,23 @@ describe('errorFormatter', () => {
     `(
       'should have status code $expected when $error is formatted',
       ({ error, expected }) => {
-        expect(formatter(error).error.statusCode).toBe(expected);
+        expect(formatError(error).error.statusCode).toBe(expected);
       }
     );
   });
 
   describe('logging', () => {
     const logger = loggerSpy();
-    const formatter = createErrorFormatter({ logger });
+    const formatError = errorFormatter({ logger });
 
     it('should log errors when configured with a logger', () => {
-      formatter(new Error());
+      formatError(new Error());
       expect(logger.error).toHaveBeenCalled();
     });
   });
 
   describe('scrubbing internal errors', () => {
-    const formatter = createErrorFormatter({ scrubInternal: true });
+    const formatError = errorFormatter({ scrubInternal: true });
     const internalMessage = 'Internal error details';
     const expectedMessage = 'Internal error';
 
@@ -50,7 +50,7 @@ describe('errorFormatter', () => {
     `(
       'should have message $expected when $error is formatted',
       ({ error, expected }) => {
-        expect(formatter(error).error.message).toBe(expected);
+        expect(formatError(error).error.message).toBe(expected);
       }
     );
   });

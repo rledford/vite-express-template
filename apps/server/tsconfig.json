@@ -18,12 +18,13 @@
     "paths": {
       "@/*": ["src/*"]
     },
-    "types": ["vitest/globals", "vite/client"]
+    "types": ["vitest/globals", "vite/client", "./index.d.ts"]
   },
   "include": [
     "src/**/*.ts",
     "vite.config.ts",
-    "src/modules/database/utils/identifierMapping.js"
+    "src/modules/database/utils/identifierMapping.js",
+    "index.d.ts"
   ],
   "exclude": ["node_modules"]
 }

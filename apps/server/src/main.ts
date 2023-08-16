@@ -1,9 +1,14 @@
 import { initApp } from './app';
-import { configModule } from './modules/config';
+import { platformConfig } from './platform/config';
 
 const main = async () => {
-  const config = configModule().get();
-  const app = await initApp({ config });
+  const config = platformConfig();
+  const app = await initApp({
+    config: {
+      app: config.forApp(),
+      db: config.forDatabase()
+    }
+  });
 
   await app.start();
 };
