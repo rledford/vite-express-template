@@ -29,6 +29,6 @@ export const userRepository = ({ db }: Deps): UserRepository => {
         .select((eb) => eb.fn.count('id').as('num_users'))
         .executeTakeFirst();
       return Number(count?.num_users || 0);
-    }
+    },
   };
 };

@@ -20,6 +20,6 @@ export const userService = ({ repository }: Deps): UserService => {
       if (!user) throw new NotFoundError();
 
       return user;
-    }
+    },
   };
 };

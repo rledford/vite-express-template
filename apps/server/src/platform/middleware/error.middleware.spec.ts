@@ -17,8 +17,8 @@ describe('errorMiddleware', () => {
     expect(res.json).toHaveBeenCalledWith({
       error: {
         ...formattedError.error,
-        id: expect.any(String)
-      }
+        id: expect.any(String),
+      },
     });
   });
 });

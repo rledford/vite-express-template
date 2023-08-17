@@ -6,7 +6,7 @@ import { AuthService } from './auth.service';
 import {
   TokenPayloadSchema,
   UserClaimsSchema,
-  UserRegistrationSchema
+  UserRegistrationSchema,
 } from './models';
 import { validateMiddleware } from '@/platform/middleware';
 
@@ -25,7 +25,7 @@ export const authController = ({ service, jwt }: Deps) => {
     jwt,
     withResData(UserClaimsSchema)(async (req) => {
       return req.claims;
-    })
+    }),
   );
 
   router.post(
@@ -34,7 +34,7 @@ export const authController = ({ service, jwt }: Deps) => {
       const token = await service.authenticate(getBasicCredentials(req));
 
       return { token };
-    })
+    }),
   );
 
   router.post(
@@ -44,7 +44,7 @@ export const authController = ({ service, jwt }: Deps) => {
       const token = await service.register(req.body);
 
       return { token };
-    })
+    }),
   );
 
   return router;

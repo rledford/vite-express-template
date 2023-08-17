@@ -6,10 +6,12 @@
     "test": "turbo test",
     "lint": "turbo lint",
     "type-check": "turbo type-check",
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "format": "pnpm exec prettier . --write"
   },
   "devDependencies": {
-    "turbo": "1.10.8",
-    "husky": "8.0.0"
+    "husky": "8.0.0",
+    "prettier": "3.0.2",
+    "turbo": "1.10.8"
   }
 }

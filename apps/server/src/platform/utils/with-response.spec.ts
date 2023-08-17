@@ -5,10 +5,10 @@ import { z } from 'zod';
 
 describe('withResponse', () => {
   const MockData = z.object({
-    name: z.literal('mock')
+    name: z.literal('mock'),
   });
   const InvalidMockData = z.object({
-    name: z.literal('invalid')
+    name: z.literal('invalid'),
   });
   const mockData = { name: 'mock' };
   const mockHandler = () => {

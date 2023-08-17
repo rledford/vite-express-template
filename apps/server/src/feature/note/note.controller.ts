@@ -6,7 +6,7 @@ import { NoteService } from './note.service';
 import {
   CreateNoteSchema,
   CreateNoteWithUserSchema,
-  NoteSchema
+  NoteSchema,
 } from './note.schema';
 
 export type NoteController = Router;
@@ -27,9 +27,9 @@ export const noteController = ({ service, jwt }: Deps): NoteController => {
     validateMiddleware(CreateNoteSchema),
     withResData(NoteSchema)((req) => {
       return service.create(
-        CreateNoteWithUserSchema.parse({ userId: req.claims?.id, ...req.body })
+        CreateNoteWithUserSchema.parse({ userId: req.claims?.id, ...req.body }),
       );
-    })
+    }),
   );
 
   router.get(
@@ -37,8 +37,8 @@ export const noteController = ({ service, jwt }: Deps): NoteController => {
     jwt,
     withResData(NoteSchema)(async (req) =>
       // TODO: switch to using Context class with getters that throw when accessing an undefined property
-      service.getAllByUserId(req.claims?.id as number)
-    )
+      service.getAllByUserId(req.claims?.id as number),
+    ),
   );
 
   return router;

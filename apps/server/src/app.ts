@@ -8,7 +8,7 @@ import { errorFormatter } from './platform/utils/error-formatter';
 import {
   accessLoggerMiddleware,
   errorMiddleware,
-  notFoundMiddleware
+  notFoundMiddleware,
 } from './platform/middleware';
 import { createLogger } from './platform/logger';
 import { healthModule } from './feature/health';
@@ -38,7 +38,7 @@ export const initApp = async ({ config }: Deps) => {
 
   const auth = authModule({
     db: db.connection,
-    jwtSecret: config.app.jwtSecret
+    jwtSecret: config.app.jwtSecret,
   });
 
   const health = healthModule();
@@ -56,9 +56,9 @@ export const initApp = async ({ config }: Deps) => {
     errorMiddleware({
       formatError: errorFormatter({
         logger,
-        scrubInternal: config.app.isProd
-      })
-    })
+        scrubInternal: config.app.isProd,
+      }),
+    }),
   );
 
   return {
@@ -74,6 +74,6 @@ export const initApp = async ({ config }: Deps) => {
         server.close();
         server.closeAllConnections();
       }
-    }
+    },
   };
 };

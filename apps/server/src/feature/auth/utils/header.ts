@@ -5,7 +5,7 @@ import {
   BasicCredential,
   BasicCredentialSchema,
   JWT,
-  JWTSchema
+  JWTSchema,
 } from '../models';
 
 export const getBasicCredentials = (req: Request): BasicCredential => {
@@ -25,7 +25,7 @@ export const getBasicCredentials = (req: Request): BasicCredential => {
 
 export const getBearerToken = (req: Request): JWT => {
   const token = JWTSchema.safeParse(
-    req.headers.authorization?.replace(/^bearer\s/i, '').trim() || ''
+    req.headers.authorization?.replace(/^bearer\s/i, '').trim() || '',
   );
 
   if (!token.success) throw new UnauthorizedError('Missing token');

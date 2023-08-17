@@ -19,6 +19,6 @@ export const noteService = ({ repository }: Deps): NoteService => {
       return repository.insert(dto);
     },
     getAllByUserId: (userId) => repository.findByUserId(userId),
-    update: async () => undefined
+    update: async () => undefined,
   };
 };

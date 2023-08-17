@@ -3,7 +3,7 @@ import {
   ForbiddenError,
   InternalError,
   NotFoundError,
-  UnauthorizedError
+  UnauthorizedError,
 } from '@/platform/error';
 import { loggerSpy } from '@/test/spies';
 import { errorFormatter } from './error-formatter';
@@ -24,7 +24,7 @@ describe('errorFormatter', () => {
       'should have status code $expected when $error is formatted',
       ({ error, expected }) => {
         expect(formatError(error).error.statusCode).toBe(expected);
-      }
+      },
     );
   });
 
@@ -51,7 +51,7 @@ describe('errorFormatter', () => {
       'should have message $expected when $error is formatted',
       ({ error, expected }) => {
         expect(formatError(error).error.message).toBe(expected);
-      }
+      },
     );
   });
 });

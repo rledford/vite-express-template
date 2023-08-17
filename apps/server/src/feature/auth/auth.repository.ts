@@ -9,7 +9,7 @@ type Deps = {
 export interface AuthRepository {
   insert: (credentials: UserCredentials) => Promise<User | undefined>;
   findByCredentials: (
-    userCredentials: UserCredentials
+    userCredentials: UserCredentials,
   ) => Promise<User | undefined>;
 }
 
@@ -29,6 +29,6 @@ export const authRepository = ({ db }: Deps): AuthRepository => {
         .where('user.username', '=', username)
         .where('user.hash', '=', hash)
         .executeTakeFirst();
-    }
+    },
   };
 };

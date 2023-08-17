@@ -25,16 +25,16 @@ export interface PlatformDatabase {
 export const database = (deps: Deps): PlatformDatabase => {
   const { config, logger } = deps;
   const pool = new pg.Pool({
-    ...config
+    ...config,
   });
 
   const dialect = new PostgresDialect({
-    pool
+    pool,
   });
 
   const connection = new Kysely<DatabaseSchema>({
     dialect,
-    plugins: [new CamelCasePlugin()]
+    plugins: [new CamelCasePlugin()],
   });
 
   logger?.info(`Connecting to database...`);
@@ -54,11 +54,11 @@ export const database = (deps: Deps): PlatformDatabase => {
             `Error connecting to database\n${err}\nconfig\n${JSON.stringify(
               {
                 ...config,
-                password: '*****'
+                password: '*****',
               },
               null,
-              2
-            )}`
+              2,
+            )}`,
           );
           reject(err);
         });
@@ -70,6 +70,6 @@ export const database = (deps: Deps): PlatformDatabase => {
     disconnect: async () => {
       await connection.destroy();
       logger?.info('Database disconnected');
-    }
+    },
   };
 };

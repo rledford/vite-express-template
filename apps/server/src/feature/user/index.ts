@@ -16,6 +16,6 @@ export const userModule = ({ db, jwt }: Deps) => {
 
   return {
     service,
-    controller
+    controller,
   };
 };

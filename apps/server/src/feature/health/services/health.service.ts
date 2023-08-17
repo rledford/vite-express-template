@@ -5,5 +5,5 @@ export interface HealthService {
 }
 
 export const healthService = (): HealthService => ({
-  getHealth: async () => ({ uptime: process.uptime() })
+  getHealth: async () => ({ uptime: process.uptime() }),
 });

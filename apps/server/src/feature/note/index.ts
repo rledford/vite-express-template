@@ -19,6 +19,6 @@ export const noteModule = ({ db, jwt }: Deps) => {
   const controller = noteController({ service, jwt });
 
   return {
-    controller
+    controller,
   };
 };

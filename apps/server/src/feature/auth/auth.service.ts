@@ -7,7 +7,7 @@ import {
   SignClaimsFn,
   UserClaims,
   UserClaimsSchema,
-  VerifyJWTFn
+  VerifyJWTFn,
 } from './models';
 import { hash } from './utils';
 
@@ -26,7 +26,7 @@ export interface AuthService {
 export const authService = ({ repository, jwtSecret }: Deps): AuthService => {
   const sign = (claims: UserClaims) =>
     jwt.sign(claims, jwtSecret, {
-      expiresIn: '1h'
+      expiresIn: '1h',
     });
 
   const verify = (token: JWT) =>
@@ -46,7 +46,7 @@ export const authService = ({ repository, jwtSecret }: Deps): AuthService => {
 
       const user = await repository.insert({
         username,
-        hash: pwd
+        hash: pwd,
       });
 
       return sign(UserClaimsSchema.parse(user));
@@ -58,6 +58,6 @@ export const authService = ({ repository, jwtSecret }: Deps): AuthService => {
       if (!user) throw new UnauthorizedError();
 
       return sign(UserClaimsSchema.parse(user));
-    }
+    },
   };
 };

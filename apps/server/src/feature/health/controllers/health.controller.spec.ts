@@ -6,7 +6,7 @@ import { healthController } from './health.controller';
 describe('healthController', () => {
   const app = express();
   const mockService: HealthService = {
-    getHealth: () => Promise.resolve({ uptime: 1 })
+    getHealth: () => Promise.resolve({ uptime: 1 }),
   };
 
   const controller = healthController({ service: mockService });
@@ -21,8 +21,8 @@ describe('healthController', () => {
         .expect(({ body }) => {
           expect(body).toMatchObject({
             data: {
-              uptime: expect.any(Number)
-            }
+              uptime: expect.any(Number),
+            },
           });
         });
     });

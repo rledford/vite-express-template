@@ -9,14 +9,14 @@ export const LogLevelSchema = z.union([
   z.literal('debug'),
   z.literal('info'),
   z.literal('warn'),
-  z.literal('error')
+  z.literal('error'),
 ]);
 
 export type EnvMode = z.infer<typeof EnvModeSchema>;
 export const EnvModeSchema = z.union([
   z.literal('test'),
   z.literal('development'),
-  z.literal('production')
+  z.literal('production'),
 ]);
 
 export type AppConfig = z.infer<typeof AppConfigSchema>;
@@ -25,7 +25,7 @@ export const AppConfigSchema = z.object({
   mode: EnvModeSchema,
   port: PortSchema,
   jwtSecret: ValidStringSchema,
-  isProd: z.boolean()
+  isProd: z.boolean(),
 });
 
 export type DatabaseConfig = z.infer<typeof DatabaseConfigSchema>;
@@ -36,7 +36,7 @@ export const DatabaseConfigSchema = z.object({
   user: ValidStringSchema,
   password: ValidStringSchema,
   min: ValidPoolSizeSchema,
-  max: ValidPoolSizeSchema
+  max: ValidPoolSizeSchema,
 });
 
 export type Env = z.infer<typeof EnvSchema>;
@@ -51,5 +51,5 @@ export const EnvSchema = z.object({
   DB_PASS: ValidStringSchema,
   DB_DATABASE: ValidStringSchema,
   DB_MIN_POOL_SIZE: ValidPoolSizeSchema.default(2),
-  DB_MAX_POOL_SIZE: ValidPoolSizeSchema.default(10)
+  DB_MAX_POOL_SIZE: ValidPoolSizeSchema.default(10),
 });

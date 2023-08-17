@@ -9,7 +9,7 @@ describe('jwtGuard', () => {
 
   const mockClaims: UserClaims = {
     id: 1,
-    username: 'mock'
+    username: 'mock',
   };
 
   let reqSpy: Request;

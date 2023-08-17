@@ -24,13 +24,13 @@ export const authModule = ({ db, jwtSecret }: Deps): AuthModule => {
 
   const controller = authController({
     service,
-    jwt
+    jwt,
   });
 
   return {
     controller,
     guards: {
-      jwt
-    }
+      jwt,
+    },
   };
 };

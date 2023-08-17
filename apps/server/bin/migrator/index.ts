@@ -6,7 +6,7 @@ import {
   Kysely,
   Migrator,
   PostgresDialect,
-  FileMigrationProvider
+  FileMigrationProvider,
 } from 'kysely';
 
 type MigrationCommand = 'up' | 'down' | 'latest';
@@ -31,9 +31,9 @@ async function migrate() {
         host: env.DB_HOST,
         port: Number(env.DB_PORT),
         user: env.DB_USER,
-        password: env.DB_PASS
-      })
-    })
+        password: env.DB_PASS,
+      }),
+    }),
   });
 
   const migrator = new Migrator({
@@ -41,8 +41,8 @@ async function migrate() {
     provider: new FileMigrationProvider({
       fs,
       path,
-      migrationFolder: path.join(__dirname, '../migrations')
-    })
+      migrationFolder: path.join(__dirname, '../migrations'),
+    }),
   });
 
   const { error, results } = await executeMigration({ command, migrator });

@@ -29,8 +29,8 @@ export const errorFormatter =
       error: {
         id,
         statusCode,
-        message
-      }
+        message,
+      },
     };
   };
 
@@ -39,8 +39,8 @@ export const FormattedErrorSchema = z.object({
   error: z.object({
     id: z.string(),
     statusCode: z.number().gte(400).default(500),
-    message: z.string().default('An error occurred')
-  })
+    message: z.string().default('An error occurred'),
+  }),
 });
 
 const getStatusCode = (err: Error | CustomError) => {

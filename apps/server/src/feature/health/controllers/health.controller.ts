@@ -14,7 +14,7 @@ export const healthController = ({ service }: Deps): Router => {
     '/',
     withResData(Health)(async () => {
       return service.getHealth();
-    })
+    }),
   );
 
   return router;

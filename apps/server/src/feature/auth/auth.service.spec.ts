@@ -5,22 +5,22 @@ import { UserClaims, UserRegistration } from './models';
 describe('authService', () => {
   const mockClaims: UserClaims = {
     id: 1,
-    username: 'mock'
+    username: 'mock',
   };
 
   const mockAuth: UserRegistration = {
     username: 'mock',
-    password: 'mock'
+    password: 'mock',
   };
 
   const repositorySpy = {
     insert: vi.fn(),
-    findByCredentials: vi.fn()
+    findByCredentials: vi.fn(),
   };
 
   const service = authService({
     jwtSecret: 'test',
-    repository: repositorySpy
+    repository: repositorySpy,
   });
 
   describe('sign', () => {
@@ -37,7 +37,7 @@ describe('authService', () => {
 
     it('should throw if token is invalid', () => {
       expect(() => service.verify('--invalid--')).toThrowError(
-        UnauthorizedError
+        UnauthorizedError,
       );
     });
   });
@@ -47,7 +47,7 @@ describe('authService', () => {
       vi.spyOn(repositorySpy, 'insert').mockResolvedValueOnce(mockClaims);
 
       await expect(service.register(mockAuth)).resolves.toEqual(
-        expect.any(String)
+        expect.any(String),
       );
 
       expect(repositorySpy.insert).toHaveBeenCalled();
@@ -57,20 +57,20 @@ describe('authService', () => {
   describe('authenticate', () => {
     it('should find a user by credentials and return a token', async () => {
       vi.spyOn(repositorySpy, 'findByCredentials').mockResolvedValueOnce(
-        mockClaims
+        mockClaims,
       );
 
       await expect(service.authenticate(mockAuth)).resolves.toEqual(
-        expect.any(String)
+        expect.any(String),
       );
     });
 
     it('should throw unauthorized if user not found', async () => {
       vi.spyOn(repositorySpy, 'findByCredentials').mockResolvedValueOnce(
-        undefined
+        undefined,
       );
       await expect(service.authenticate(mockAuth)).rejects.toThrowError(
-        UnauthorizedError
+        UnauthorizedError,
       );
     });
   });

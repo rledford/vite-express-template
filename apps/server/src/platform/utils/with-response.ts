@@ -6,11 +6,11 @@ type AsyncHandler<T> = (req: Request, res?: Response) => Promise<T>;
 type WrappedHandler = (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => Promise<void>;
 
 export const withResData = <T extends z.AnyZodObject>(
-  schema: T
+  schema: T,
 ): WithResponse => {
   return (handler) => async (req, res, next) => {
     try {

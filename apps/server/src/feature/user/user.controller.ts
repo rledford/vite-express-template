@@ -22,7 +22,7 @@ export const userController = ({ service, jwt }: Deps): Router => {
     '/:id',
     withResData(PublicUserSchema)(async (req) => {
       return service.getOneById(Number(req.params.id));
-    })
+    }),
   );
 
   return router;

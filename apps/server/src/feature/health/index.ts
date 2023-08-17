@@ -13,6 +13,6 @@ export const healthModule = (): HealthModule => {
 
   return {
     service,
-    controller
+    controller,
   };
 };

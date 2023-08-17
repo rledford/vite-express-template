@@ -3,7 +3,7 @@ import { createLogger, noopLogger } from './logger';
 const expectedLogger = expect.objectContaining({
   info: expect.any(Function),
   warn: expect.any(Function),
-  error: expect.any(Function)
+  error: expect.any(Function),
 });
 
 describe('logger', () => {

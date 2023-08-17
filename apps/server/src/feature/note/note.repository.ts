@@ -33,6 +33,6 @@ export const noteRepository = ({ db }: Deps): NoteRepository => {
         .execute();
     },
     update: () => undefined,
-    delete: () => undefined
+    delete: () => undefined,
   };
 };

@@ -3,7 +3,7 @@ import {
   Generated,
   Insertable,
   Selectable,
-  Updateable
+  Updateable,
 } from 'kysely';
 
 export interface UserTable {
