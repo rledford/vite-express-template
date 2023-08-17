@@ -12,6 +12,7 @@
     "build": "vite build",
     "test": "vitest run",
     "lint": "pnpm eslint --fix",
+    "type-check": "pnpm tsc --noEmit",
     "migrate:up": "tsx ./bin/migrator up",
     "migrate:down": "tsx ./bin/migrator down",
     "migrate:latest": "tsx ./bin/migrator latest"

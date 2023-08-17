@@ -3,9 +3,13 @@
   "scripts": {
     "build": "turbo build",
     "dev": "turbo dev",
-    "test": "turbo test"
+    "test": "turbo test",
+    "lint": "turbo lint",
+    "type-check": "turbo type-check",
+    "prepare": "husky install"
   },
   "devDependencies": {
-    "turbo": "1.10.8"
+    "turbo": "1.10.8",
+    "husky": "8.0.0"
   }
 }

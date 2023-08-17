@@ -11,6 +11,12 @@
     "dev": {
       "cache": false,
       "persistent": false
+    },
+    "lint": {
+      "inputs": ["src/**/*.ts"]
+    },
+    "type-check": {
+      "inputs": ["src/**/*.ts"]
     }
   }
 }
