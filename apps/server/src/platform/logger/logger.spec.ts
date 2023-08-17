@@ -1,5 +1,4 @@
-import { createLogger } from 'vite';
-import { noopLogger } from './app.logger';
+import { createLogger, noopLogger } from './logger';
 
 const expectedLogger = expect.objectContaining({
   info: expect.any(Function),

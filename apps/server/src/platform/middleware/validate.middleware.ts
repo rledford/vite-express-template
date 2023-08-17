@@ -1,5 +1,5 @@
-import { Middleware } from '@/types';
 import { z } from 'zod';
+import { Middleware } from './types';
 
 export const validateMiddleware =
   (schema: z.AnyZodObject): Middleware =>

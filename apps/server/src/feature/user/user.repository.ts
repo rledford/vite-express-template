@@ -1,8 +1,8 @@
-import { Database } from '@/platform/database';
+import { DatabaseConnection } from '@/platform/database';
 import { User } from '@/platform/database/tables';
 
 type Deps = {
-  db: Database;
+  db: DatabaseConnection;
 };
 
 export interface UserRepository {

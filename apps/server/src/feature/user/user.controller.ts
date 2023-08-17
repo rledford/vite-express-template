@@ -1,7 +1,7 @@
 import { Router } from 'express';
-import { withResData } from '@/utils';
+import { withResData } from '@/platform/utils';
+import { Middleware } from '@/platform/middleware/types';
 import { UserService } from './user.service';
-import { Middleware } from '@/types';
 import { PublicUserSchema } from './models';
 
 type Deps = {

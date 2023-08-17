@@ -1,13 +1,13 @@
 import { Router } from 'express';
+import { validateMiddleware } from '@/platform/middleware';
+import { Middleware } from '@/platform/middleware/types';
+import { withResData } from '@/platform/utils';
 import { NoteService } from './note.service';
-import { withResData } from '@/utils';
 import {
   CreateNoteSchema,
   CreateNoteWithUserSchema,
   NoteSchema
 } from './note.schema';
-import { Middleware } from '@/types';
-import { validateMiddleware } from '@/middleware';
 
 export type NoteController = Router;
 

@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { withResData } from '@/utils';
+import { withResData } from '@/platform/utils';
 import type { HealthService } from '../services';
 import { Health } from '../models';
 

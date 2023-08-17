@@ -1,4 +1,4 @@
-import { Database } from '@/platform/database';
+import { DatabaseConnection } from '@/platform/database';
 import { NewNote, Note } from '@/platform/database/tables';
 
 export interface NoteRepository {
@@ -9,7 +9,7 @@ export interface NoteRepository {
 }
 
 export type Deps = {
-  db: Database;
+  db: DatabaseConnection;
 };
 
 export const noteRepository = ({ db }: Deps): NoteRepository => {

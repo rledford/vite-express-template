@@ -2,37 +2,34 @@ import { Server } from 'http';
 import express from 'express';
 import cors from 'cors';
 import bodyParser from 'body-parser';
-import { platformDatabase } from './platform/database';
-import { AppConfig, DatabaseConfig } from './platform/config/config.schema';
-import { errorFormatter } from './utils/error-formatter';
+import { PlatformConfig } from './platform/configuration';
+import { database } from './platform/database';
+import { errorFormatter } from './platform/utils/error-formatter';
 import {
   accessLoggerMiddleware,
   errorMiddleware,
   notFoundMiddleware
-} from './middleware';
+} from './platform/middleware';
+import { createLogger } from './platform/logger';
 import { healthModule } from './feature/health';
 import { authModule } from './feature/auth';
 import { userModule } from './feature/user';
 import { noteModule } from './feature/note';
-import { appLogger } from './platform/logger';
 
 type Deps = {
-  config: {
-    app: AppConfig;
-    db: DatabaseConfig;
-  };
+  config: PlatformConfig;
 };
 
 export const initApp = async ({ config }: Deps) => {
   const app = express();
   const server = new Server(app);
-  const logger = appLogger(config.app.logLevel);
+  const logger = createLogger(config.app.logLevel);
 
   logger.info(`Vite Express Template [ ${config.app.mode} ]`);
 
-  const database = platformDatabase({ config: config.db, logger });
+  const db = database({ config: config.db, logger });
 
-  await database.connect();
+  await db.connect();
 
   app.use(cors());
   app.use(bodyParser.json());
@@ -40,13 +37,13 @@ export const initApp = async ({ config }: Deps) => {
   app.use(accessLoggerMiddleware());
 
   const auth = authModule({
-    db: database.db,
+    db: db.connection,
     jwtSecret: config.app.jwtSecret
   });
 
   const health = healthModule();
-  const user = userModule({ db: database.db, jwt: auth.guards.jwt });
-  const note = noteModule({ db: database.db, jwt: auth.guards.jwt });
+  const user = userModule({ db: db.connection, jwt: auth.guards.jwt });
+  const note = noteModule({ db: db.connection, jwt: auth.guards.jwt });
 
   app.use('/', auth.controller);
   app.use('/health', health.controller);
@@ -71,7 +68,7 @@ export const initApp = async ({ config }: Deps) => {
       });
     },
     stop: async () => {
-      await database.disconnect();
+      await db.disconnect();
 
       if (server.listening) {
         server.close();

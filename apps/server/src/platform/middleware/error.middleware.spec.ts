@@ -1,5 +1,5 @@
 import { expressSpy } from '@/test/spies';
-import { errorFormatter } from '@/utils/error-formatter';
+import { errorFormatter } from '@/platform/utils/error-formatter';
 import { errorMiddleware } from './error.middleware';
 
 describe('errorMiddleware', () => {

@@ -1,15 +1,14 @@
 import { CustomError } from '@/platform/error';
-import { FormattedError } from '@/utils/error-formatter';
-import { NextFunction, Request, Response } from 'express';
+import { FormattedError } from '@/platform/utils/error-formatter';
+import { ErrorMiddleware } from './types';
 
 type Deps = {
   formatError: (error: Error | CustomError) => FormattedError;
 };
 
 export const errorMiddleware =
-  ({ formatError }: Deps) =>
-  /* eslint-disable  @typescript-eslint/no-unused-vars*/
-  (err: Error, req: Request, res: Response, next: NextFunction) => {
+  ({ formatError }: Deps): ErrorMiddleware =>
+  (err, req, res) => {
     const formattedError = formatError(err);
     const { statusCode } = formattedError.error;
 

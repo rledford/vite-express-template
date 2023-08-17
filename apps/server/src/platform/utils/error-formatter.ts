@@ -1,10 +1,10 @@
 import { z } from 'zod';
 import { nanoid } from 'nanoid';
 import { CustomError } from '@/platform/error';
-import { AppLogger } from '@/platform/logger';
+import { Logger } from '@/platform/logger';
 
 type Config = {
-  logger?: AppLogger;
+  logger?: Logger;
   scrubInternal?: boolean;
 };
 

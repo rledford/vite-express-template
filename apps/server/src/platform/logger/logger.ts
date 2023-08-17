@@ -1,7 +1,7 @@
 import winston from 'winston';
-import { LogLevel } from '../config/config.schema';
+import { LogLevel } from '../configuration/config.schema';
 
-export interface AppLogger {
+export interface Logger {
   info: (msg?: string) => void;
   warn: (msg?: string) => void;
   error: (msg?: string) => void;
@@ -14,14 +14,14 @@ const format = winston.format.combine(
   )
 );
 
-export const appLogger = (logLevel: LogLevel): AppLogger =>
+export const createLogger = (logLevel?: LogLevel): Logger =>
   winston.createLogger({
     format,
     transports: [new winston.transports.Console()],
     level: logLevel
   });
 
-export const noopLogger = (): AppLogger => ({
+export const noopLogger = (): Logger => ({
   info: () => undefined,
   warn: () => undefined,
   error: () => undefined

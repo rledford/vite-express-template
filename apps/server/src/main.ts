@@ -1,14 +1,10 @@
 import { initApp } from './app';
-import { platformConfig } from './platform/config';
+import { configuration } from './platform/configuration';
 
 const main = async () => {
-  const config = platformConfig();
-  const app = await initApp({
-    config: {
-      app: config.forApp(),
-      db: config.forDatabase()
-    }
-  });
+  const config = configuration();
+
+  const app = await initApp({ config });
 
   await app.start();
 };

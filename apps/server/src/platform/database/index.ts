@@ -1,28 +1,28 @@
 import pg from 'pg';
 import { CamelCasePlugin, Kysely, PostgresDialect } from 'kysely';
+import { DatabaseConfig } from '../configuration/config.schema';
+import { Logger } from '../logger';
 import { NoteTable, UserTable } from './tables';
-import { DatabaseConfig } from '../config/config.schema';
-import { AppLogger } from '../logger';
 
 export interface DatabaseSchema {
   user: UserTable;
   note: NoteTable;
 }
 
-export type Database = Kysely<DatabaseSchema>;
+export type DatabaseConnection = Kysely<DatabaseSchema>;
 
 type Deps = {
   config: DatabaseConfig;
-  logger?: AppLogger;
+  logger?: Logger;
 };
 
 export interface PlatformDatabase {
-  db: Database;
+  connection: DatabaseConnection;
   connect: () => Promise<void>;
   disconnect: () => Promise<void>;
 }
 
-export const platformDatabase = (deps: Deps): PlatformDatabase => {
+export const database = (deps: Deps): PlatformDatabase => {
   const { config, logger } = deps;
   const pool = new pg.Pool({
     ...config
@@ -32,7 +32,7 @@ export const platformDatabase = (deps: Deps): PlatformDatabase => {
     pool
   });
 
-  const db = new Kysely<DatabaseSchema>({
+  const connection = new Kysely<DatabaseSchema>({
     dialect,
     plugins: [new CamelCasePlugin()]
   });
@@ -65,10 +65,10 @@ export const platformDatabase = (deps: Deps): PlatformDatabase => {
     });
 
   return {
-    db,
+    connection,
     connect,
     disconnect: async () => {
-      await db.destroy();
+      await connection.destroy();
       logger?.info('Database disconnected');
     }
   };

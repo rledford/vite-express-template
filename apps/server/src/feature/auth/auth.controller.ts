@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { withResData } from '@/utils';
+import { withResData } from '@/platform/utils';
 import { getBasicCredentials } from './utils';
 import { AuthService } from './auth.service';
 import { Middleware } from '@/types';
@@ -8,7 +8,7 @@ import {
   UserClaimsSchema,
   UserRegistrationSchema
 } from './models';
-import { validateMiddleware } from '@/middleware';
+import { validateMiddleware } from '@/platform/middleware';
 
 type Deps = {
   service: AuthService;
