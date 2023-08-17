@@ -8,7 +8,9 @@ type Deps = {
 
 export const errorMiddleware =
   ({ formatError }: Deps): ErrorMiddleware =>
-  (err, req, res) => {
+  /* must include `next` to match the signature express expects */
+  /* eslint-disable  @typescript-eslint/no-unused-vars */
+  (err, req, res, next) => {
     const formattedError = formatError(err);
     const { statusCode } = formattedError.error;
 

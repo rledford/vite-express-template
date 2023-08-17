@@ -4,10 +4,10 @@ import { AuthRepository } from './auth.repository';
 import {
   BasicCredential,
   JWT,
-  SignClaimsFn,
+  SignClaims,
   UserClaims,
   UserClaimsSchema,
-  VerifyJWTFn,
+  VerifyJWT,
 } from './models';
 import { hash } from './utils';
 
@@ -17,8 +17,8 @@ type Deps = {
 };
 
 export interface AuthService {
-  sign: SignClaimsFn;
-  verify: VerifyJWTFn;
+  sign: SignClaims;
+  verify: VerifyJWT;
   register: (reg: BasicCredential) => Promise<JWT>;
   authenticate: (credentials: BasicCredential) => Promise<JWT>;
 }

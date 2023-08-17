@@ -1,9 +1,9 @@
 import { Note } from '@/platform/database/tables';
 import { NoteRepository } from './note.repository';
-import { CreateNoteWithUser } from './note.schema';
+import { CreateNote } from './note.schema';
 
 export interface NoteService {
-  create: (dto: CreateNoteWithUser) => Promise<Note | undefined>;
+  create: (dto: CreateNote) => Promise<Note | undefined>;
   getAllByUserId: (userId: number) => Promise<Note[]>;
   update: () => Promise<undefined>;
 }

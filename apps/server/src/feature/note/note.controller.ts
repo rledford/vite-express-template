@@ -1,13 +1,9 @@
 import { Router } from 'express';
-import { validateMiddleware } from '@/platform/middleware';
+import { validateWithCurrentUser } from '@/platform/middleware';
 import { Middleware } from '@/platform/middleware/types';
 import { withResData } from '@/platform/utils';
 import { NoteService } from './note.service';
-import {
-  CreateNoteSchema,
-  CreateNoteWithUserSchema,
-  NoteSchema,
-} from './note.schema';
+import { CreateNoteSchema, NoteSchema } from './note.schema';
 
 export type NoteController = Router;
 
@@ -24,12 +20,8 @@ export const noteController = ({ service, jwt }: Deps): NoteController => {
   router.post(
     '/',
     jwt,
-    validateMiddleware(CreateNoteSchema),
-    withResData(NoteSchema)((req) => {
-      return service.create(
-        CreateNoteWithUserSchema.parse({ userId: req.claims?.id, ...req.body }),
-      );
-    }),
+    validateWithCurrentUser(CreateNoteSchema),
+    withResData(NoteSchema)((req) => service.create(req.body)),
   );
 
   router.get(

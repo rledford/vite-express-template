@@ -28,14 +28,11 @@ export const TokenPayloadSchema = z.object({
   token: z.string().nonempty(),
 });
 
-export type SignClaimsFn = z.infer<typeof SignClaimsFn>;
-export const SignClaimsFn = z
+export type SignClaims = z.infer<typeof SignClaims>;
+export const SignClaims = z
   .function()
   .args(UserClaimsSchema)
   .returns(JWTSchema);
 
-export type VerifyJWTFn = z.infer<typeof VerifyJWTFn>;
-export const VerifyJWTFn = z
-  .function()
-  .args(JWTSchema)
-  .returns(UserClaimsSchema);
+export type VerifyJWT = z.infer<typeof VerifyJWT>;
+export const VerifyJWT = z.function().args(JWTSchema).returns(UserClaimsSchema);

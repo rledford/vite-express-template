@@ -14,15 +14,9 @@ export const NoteSchema = z
 
 export type CreateNote = z.infer<typeof CreateNoteSchema>;
 export const CreateNoteSchema = z.object({
+  userId: z.number().int(),
   content: z.string(),
 });
-
-export type CreateNoteWithUser = z.infer<typeof CreateNoteWithUserSchema>;
-export const CreateNoteWithUserSchema = z
-  .object({
-    userId: z.number().int(),
-  })
-  .merge(CreateNoteSchema);
 
 export type UpdateNote = z.infer<typeof UpdateNoteSchema>;
 export const UpdateNoteSchema = z

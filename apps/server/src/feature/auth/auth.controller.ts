@@ -8,7 +8,7 @@ import {
   UserClaimsSchema,
   UserRegistrationSchema,
 } from './models';
-import { validateMiddleware } from '@/platform/middleware';
+import { validate } from '@/platform/middleware';
 
 type Deps = {
   service: AuthService;
@@ -39,7 +39,7 @@ export const authController = ({ service, jwt }: Deps) => {
 
   router.post(
     '/register',
-    validateMiddleware(UserRegistrationSchema),
+    validate(UserRegistrationSchema),
     withResData(TokenPayloadSchema)(async (req) => {
       const token = await service.register(req.body);
 

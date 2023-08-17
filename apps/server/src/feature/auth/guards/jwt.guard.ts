@@ -1,10 +1,10 @@
 import { NextFunction, Request, Response } from 'express';
 import { Middleware } from '@/platform/middleware/types';
 import { getBearerToken } from '../utils';
-import { UserClaimsSchema, VerifyJWTFn } from '../models';
+import { UserClaimsSchema, VerifyJWT } from '../models';
 
 type Deps = {
-  verify: VerifyJWTFn;
+  verify: VerifyJWT;
 };
 
 export const jwtGuard = ({ verify }: Deps): Middleware => {
