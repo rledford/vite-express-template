@@ -1,11 +1,11 @@
+import { DatabaseConnection } from '@/platform/database';
+import { Middleware } from '@/platform/middleware/types';
 import { userService } from './user.service';
 import { userController } from './user.controller';
 import { userRepository } from './user.repository';
-import { Middleware } from '@/types';
-import { Database } from '@/platform/database';
 
 type Deps = {
-  db: Database;
+  db: DatabaseConnection;
   jwt: Middleware;
 };
 

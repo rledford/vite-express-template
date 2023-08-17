@@ -1,8 +1,8 @@
 import { Router } from 'express';
+import { Middleware } from '@/platform/middleware/types';
 import { withResData } from '@/platform/utils';
 import { getBasicCredentials } from './utils';
 import { AuthService } from './auth.service';
-import { Middleware } from '@/types';
 import {
   TokenPayloadSchema,
   UserClaimsSchema,

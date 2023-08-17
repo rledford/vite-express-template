@@ -1,12 +1,12 @@
-import { Database } from '../database/types';
+import { DatabaseConnection } from '@/platform/database';
+import { Middleware } from '@/platform/middleware/types';
 import { AuthController, authController } from './auth.controller';
 import { authRepository } from './auth.repository';
 import { authService } from './auth.service';
-import { Middleware } from '@/types';
 import { jwtGuard } from './guards';
 
 type Deps = {
-  db: Database;
+  db: DatabaseConnection;
   jwtSecret: string;
 };
 

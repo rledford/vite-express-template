@@ -1,8 +1,9 @@
-import { Database, User } from '../database/types';
+import { DatabaseConnection } from '@/platform/database';
+import { User } from '@/platform/database/tables';
 import type { UserCredentials } from './models';
 
 type Deps = {
-  db: Database;
+  db: DatabaseConnection;
 };
 
 export interface AuthRepository {

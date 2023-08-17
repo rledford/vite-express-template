@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from 'express';
-import { Middleware } from '@/types';
+import { Middleware } from '@/platform/middleware/types';
 import { getBearerToken } from '../utils';
 import { UserClaimsSchema, VerifyJWTFn } from '../models';
 

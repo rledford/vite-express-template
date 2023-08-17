@@ -1,4 +1,4 @@
-import { Logger } from '@/types';
+import { Logger } from '@/platform/logger';
 
 export const loggerSpy = (): Logger => ({
   info: vi.fn(),

@@ -1,5 +1,5 @@
-import { Database } from '@/platform/database';
-import { Middleware } from '@/types';
+import { DatabaseConnection } from '@/platform/database';
+import { Middleware } from '@/platform/middleware/types';
 import { NoteController, noteController } from './note.controller';
 import { noteRepository } from './note.repository';
 import { noteService } from './note.service';
@@ -9,7 +9,7 @@ export interface NoteModule {
 }
 
 export type Deps = {
-  db: Database;
+  db: DatabaseConnection;
   jwt: Middleware;
 };
 
