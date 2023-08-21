@@ -1,6 +1,6 @@
 import { CustomError } from '@/platform/error';
 import { FormattedError } from '@/platform/utils/error-formatter';
-import { ErrorMiddleware } from './types';
+import { ErrorMiddleware } from '../types';
 
 type Deps = {
   formatError: (error: Error | CustomError) => FormattedError;

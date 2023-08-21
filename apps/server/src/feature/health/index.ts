@@ -1,6 +1,6 @@
 import { Router } from 'express';
-import { healthController } from './controllers';
-import { HealthService, healthService } from './services';
+import { HealthService, healthService } from './health.service';
+import { healthController } from './health.controller';
 
 interface HealthModule {
   service: HealthService;

@@ -1,2 +1,2 @@
-export * from './express.spy';
+export * from './request-handler.spy';
 export * from './logger.spy';

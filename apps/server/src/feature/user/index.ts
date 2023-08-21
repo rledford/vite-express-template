@@ -1,21 +1,58 @@
 import { DatabaseConnection } from '@/platform/database';
-import { Middleware } from '@/platform/middleware/types';
-import { userService } from './user.service';
-import { userController } from './user.controller';
+import { Middleware } from '@/platform/types';
 import { userRepository } from './user.repository';
+import { currentUserService, userService } from './services';
+import {
+  CurrentUserController,
+  currentUserController,
+  userController,
+} from './controllers';
+import { Router } from 'express';
+import { JWTSigner } from '@/platform/auth';
 
-type Deps = {
+export * from './user.schema';
+
+export interface UserModule {
+  controller: CurrentUserController;
+}
+
+export interface CurrentUserModule {
+  controller: Router;
+}
+
+type UserDeps = {
   db: DatabaseConnection;
-  jwt: Middleware;
+  jwtGuard: Middleware;
 };
 
-export const userModule = ({ db, jwt }: Deps) => {
+export const userModule = ({ db, jwtGuard }: UserDeps) => {
   const repository = userRepository({ db });
   const service = userService({ repository });
-  const controller = userController({ service, jwt });
+  const controller = userController({ service, jwtGuard });
 
   return {
-    service,
+    controller,
+  };
+};
+
+type CurrentUserDeps = {
+  db: DatabaseConnection;
+  jwtGuard: Middleware;
+  jwtSign: JWTSigner;
+  basicGuard: Middleware;
+};
+
+export const currentUserModule = ({
+  db,
+  jwtGuard,
+  basicGuard,
+  jwtSign,
+}: CurrentUserDeps) => {
+  const repository = userRepository({ db });
+  const service = currentUserService({ repository, sign: jwtSign });
+  const controller = currentUserController({ service, jwtGuard, basicGuard });
+
+  return {
     controller,
   };
 };

@@ -7,13 +7,16 @@ import { database } from './platform/database';
 import { errorFormatter } from './platform/utils/error-formatter';
 import {
   accessLoggerMiddleware,
+  basicMiddleware,
   errorMiddleware,
+  jwtMiddleware,
   notFoundMiddleware,
+  requestContextMiddleware,
 } from './platform/middleware';
 import { createLogger } from './platform/logger';
 import { healthModule } from './feature/health';
-import { authModule } from './feature/auth';
-import { userModule } from './feature/user';
+import { currentUserModule, userModule } from './feature/user';
+import { jwtPair } from './platform/auth';
 import { noteModule } from './feature/note';
 
 type Deps = {
@@ -24,6 +27,9 @@ export const initApp = async ({ config }: Deps) => {
   const app = express();
   const server = new Server(app);
   const logger = createLogger(config.app.logLevel);
+  const jwt = jwtPair({ secret: config.app.jwtSecret });
+  const jwtGuard = jwtMiddleware({ verify: jwt.verify });
+  const basicGuard = basicMiddleware();
 
   logger.info(`Vite Express Template [ ${config.app.mode} ]`);
 
@@ -31,22 +37,24 @@ export const initApp = async ({ config }: Deps) => {
 
   await db.connect();
 
+  app.use(requestContextMiddleware());
   app.use(cors());
   app.use(bodyParser.json());
   app.use(bodyParser.urlencoded({ extended: true }));
   app.use(accessLoggerMiddleware());
 
-  const auth = authModule({
-    db: db.connection,
-    jwtSecret: config.app.jwtSecret,
-  });
-
   const health = healthModule();
-  const user = userModule({ db: db.connection, jwt: auth.guards.jwt });
-  const note = noteModule({ db: db.connection, jwt: auth.guards.jwt });
+  const user = userModule({ db: db.connection, jwtGuard });
+  const currentUser = currentUserModule({
+    db: db.connection,
+    jwtGuard,
+    basicGuard,
+    jwtSign: jwt.sign,
+  });
+  const note = noteModule({ db: db.connection, jwtGuard });
 
-  app.use('/', auth.controller);
   app.use('/health', health.controller);
+  app.use('/', currentUser.controller);
   app.use('/users', user.controller);
   app.use('/notes', note.controller);
 

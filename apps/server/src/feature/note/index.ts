@@ -1,5 +1,5 @@
 import { DatabaseConnection } from '@/platform/database';
-import { Middleware } from '@/platform/middleware/types';
+import { Middleware } from '@/platform/types';
 import { NoteController, noteController } from './note.controller';
 import { noteRepository } from './note.repository';
 import { noteService } from './note.service';
@@ -10,13 +10,13 @@ export interface NoteModule {
 
 export type Deps = {
   db: DatabaseConnection;
-  jwt: Middleware;
+  jwtGuard: Middleware;
 };
 
-export const noteModule = ({ db, jwt }: Deps) => {
+export const noteModule = ({ db, jwtGuard }: Deps) => {
   const repository = noteRepository({ db });
   const service = noteService({ repository });
-  const controller = noteController({ service, jwt });
+  const controller = noteController({ service, jwtGuard });
 
   return {
     controller,

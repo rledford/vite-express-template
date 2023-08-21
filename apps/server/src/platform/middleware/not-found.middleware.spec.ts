@@ -1,6 +1,6 @@
 import { NotFoundError } from '@/platform/error';
 import { notFoundMiddleware } from './not-found.middleware';
-import { expressSpy } from '@/test/spies';
+import { requestHandlerSpy } from '@/test/spies';
 
 describe('notFoundMiddleware', () => {
   const middleware = notFoundMiddleware();
@@ -10,10 +10,10 @@ describe('notFoundMiddleware', () => {
   });
 
   it('should throw not found error', () => {
-    const { req, res, next } = expressSpy();
+    const { req, res, next } = requestHandlerSpy();
 
     middleware(req, res, next);
 
-    expect(next).toHaveBeenCalledWith(new NotFoundError());
+    expect(next).toHaveBeenCalledWith(expect.any(NotFoundError));
   });
 });

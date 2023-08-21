@@ -1,4 +1,4 @@
-import { expressSpy } from '@/test/spies';
+import { requestHandlerSpy } from '@/test/spies';
 import { NextFunction, Request, Response } from 'express';
 import { withResData, withResEmpty } from './with-response';
 import { z } from 'zod';
@@ -23,7 +23,7 @@ describe('withResponse', () => {
   let nextSpy: NextFunction;
 
   beforeEach(() => {
-    ({ req: reqSpy, res: resSpy, next: nextSpy } = expressSpy());
+    ({ req: reqSpy, res: resSpy, next: nextSpy } = requestHandlerSpy());
   });
 
   describe('withResData', () => {
