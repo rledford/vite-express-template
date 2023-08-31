@@ -1,6 +1,6 @@
 import { requestHandlerSpy } from '@/test/spies';
 import { NextFunction, Request, Response } from 'express';
-import { withResData, withResEmpty } from './with-response';
+import { respondJSON, respondEmpty } from './respond';
 import { z } from 'zod';
 
 describe('withResponse', () => {
@@ -26,38 +26,38 @@ describe('withResponse', () => {
     ({ req: reqSpy, res: resSpy, next: nextSpy } = requestHandlerSpy());
   });
 
-  describe('withResData', () => {
+  describe('respondJSON', () => {
     it('should send json response when handler succeeds', async () => {
-      await withResData(MockData)(mockHandler)(reqSpy, resSpy, nextSpy);
+      await respondJSON(MockData)(mockHandler)(reqSpy, resSpy, nextSpy);
 
       expect(resSpy.status).toHaveBeenCalledWith(200);
       expect(resSpy.json).toHaveBeenCalledWith({ data: mockData });
     });
 
     it('should call next with error when handler fails', async () => {
-      await withResData(MockData)(mockFailingHandler)(reqSpy, resSpy, nextSpy);
+      await respondJSON(MockData)(mockFailingHandler)(reqSpy, resSpy, nextSpy);
 
       expect(nextSpy).toHaveBeenCalledWith(expect.any(Error));
     });
 
     it('should call next with error when handler data does not match schema', async () => {
-      await withResData(InvalidMockData)(mockHandler)(reqSpy, resSpy, nextSpy);
+      await respondJSON(InvalidMockData)(mockHandler)(reqSpy, resSpy, nextSpy);
 
       expect(resSpy.json).not.toHaveBeenCalled();
       expect(nextSpy).toHaveBeenCalledWith(expect.any(Error));
     });
   });
 
-  describe('withResEmpty', () => {
+  describe('respondEmpty', () => {
     it('should send no-content response when handler succeeds', async () => {
-      await withResEmpty(mockHandler)(reqSpy, resSpy, nextSpy);
+      await respondEmpty(mockHandler)(reqSpy, resSpy, nextSpy);
 
       expect(resSpy.status).toHaveBeenCalledWith(204);
       expect(resSpy.end).toHaveBeenCalled();
     });
 
     it('should call next with error when handler fails', async () => {
-      await withResEmpty(mockFailingHandler)(reqSpy, resSpy, nextSpy);
+      await respondEmpty(mockFailingHandler)(reqSpy, resSpy, nextSpy);
 
       expect(nextSpy).toHaveBeenCalledWith(expect.any(Error));
     });

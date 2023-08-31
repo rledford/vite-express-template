@@ -6,7 +6,7 @@ type Deps = {
   formatError: (error: Error | CustomError) => FormattedError;
 };
 
-export const errorMiddleware =
+export const errorHandler =
   ({ formatError }: Deps): ErrorMiddleware =>
   /* must include `next` to match the signature express expects */
   /* eslint-disable  @typescript-eslint/no-unused-vars */

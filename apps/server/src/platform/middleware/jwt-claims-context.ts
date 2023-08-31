@@ -7,11 +7,12 @@ type Deps = {
   verify: JWTVerifier;
 };
 
-export const jwtMiddleware = ({ verify }: Deps): Middleware => {
+export const jwtClaimsContext = ({ verify }: Deps): Middleware => {
   return async (req: Request, res: Response, next: NextFunction) => {
     try {
       const token =
         req.headers.authorization?.replace(/^bearer\s/i, '').trim() || '';
+
       req.context.claims = verify(token);
 
       next();

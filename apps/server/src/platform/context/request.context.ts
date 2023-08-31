@@ -1,9 +1,9 @@
-import { BasicCredentials, TokenClaims } from '../auth';
+import type { BasicAuth, Claims } from '../auth';
 import { InternalError } from '../error';
 
-export class RequestContext implements RequestContext {
-  private _claims?: TokenClaims;
-  private _credentials?: BasicCredentials;
+export class RequestContext {
+  private _claims?: Claims;
+  private _auth?: BasicAuth;
 
   get claims() {
     if (!this._claims)
@@ -13,19 +13,19 @@ export class RequestContext implements RequestContext {
 
     return this._claims;
   }
-  set claims(data: TokenClaims) {
+
+  set claims(data: Claims) {
     this._claims = data;
   }
 
-  get credentials() {
-    if (!this._credentials)
-      throw new InternalError(
-        'Attempted to access credentials before they were set',
-      );
+  get auth() {
+    if (!this._auth)
+      throw new InternalError('Attempted to access auth before it was set');
 
-    return this._credentials;
+    return this._auth;
   }
-  set credentials(data: BasicCredentials) {
-    this._credentials = data;
+
+  set auth(data: BasicAuth) {
+    this._auth = data;
   }
 }

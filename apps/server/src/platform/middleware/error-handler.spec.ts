@@ -1,10 +1,10 @@
 import { requestHandlerSpy } from '@/test/spies';
 import { errorFormatter } from '@/platform/utils/error-formatter';
-import { errorMiddleware } from './error.middleware';
+import { errorHandler } from './error-handler';
 
-describe('errorMiddleware', () => {
+describe('errorHandler', () => {
   const formatError = errorFormatter();
-  const middleware = errorMiddleware({ formatError });
+  const middleware = errorHandler({ formatError });
 
   it('should send a formatted json error response', () => {
     const { req, res, next } = requestHandlerSpy();

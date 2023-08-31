@@ -1,16 +1,21 @@
 import { Router } from 'express';
-import { withResData } from '@/platform/utils';
+import { respondJSON } from '@/platform/utils';
 import { HealthService } from './health.service';
-import { HealthSchema } from './health.schema';
+import { HealthDTO } from './health.dto';
 
 type Deps = {
   service: HealthService;
 };
 
+export type HealthController = Router;
+
 export const healthController = ({ service }: Deps): Router => {
   const router = Router();
+  const endpoints = Router();
 
-  router.get('/', withResData(HealthSchema)(service.getHealth));
+  router.use('/health', endpoints);
+
+  router.get('/', respondJSON(HealthDTO)(service.getHealth));
 
   return router;
 };

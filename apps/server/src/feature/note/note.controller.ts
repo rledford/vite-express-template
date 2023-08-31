@@ -1,38 +1,55 @@
 import { Router } from 'express';
 import { Middleware } from '@/platform/types';
-import { withResData } from '@/platform/utils';
+import { respondJSON } from '@/platform/utils';
 import { NoteService } from './note.service';
-import { CreateNoteSchema, NoteSchema } from './note.schema';
+import { CreateNoteDTO, NoteDTO } from './note.dto';
 
 export type NoteController = Router;
 
 type Deps = {
   service: NoteService;
-  jwtGuard: Middleware;
+  setClaimsContext: Middleware;
 };
 
-export const noteController = ({ service, jwtGuard }: Deps): NoteController => {
+export const noteController = ({
+  service,
+  setClaimsContext,
+}: Deps): NoteController => {
   const router = Router();
+  const endpoints = Router();
+
+  router.use('/notes', endpoints);
 
   // TODO: implement remaining routes
 
-  router.post(
+  endpoints.post(
     '/',
-    jwtGuard,
-    withResData(NoteSchema)(({ context, body }) =>
+    setClaimsContext,
+    respondJSON(NoteDTO)(({ context, body }) =>
       service.create(
-        CreateNoteSchema.parse({ userId: context.claims.id, ...body }),
+        CreateNoteDTO.parse({ userId: context.claims.sub, ...body }),
       ),
     ),
   );
 
-  router.get(
+  endpoints.get(
     '/',
-    jwtGuard,
-    withResData(NoteSchema)(async ({ context }) =>
+    setClaimsContext,
+    respondJSON(NoteDTO)(async ({ context }) =>
       // TODO: switch to using Context class with getters that throw when accessing an undefined property
-      service.getAllByUserId(context.claims.id as number),
+      service.getAllByUserId(context.claims.sub),
     ),
+  );
+
+  endpoints.get(
+    '/:id',
+    setClaimsContext,
+    respondJSON(NoteDTO)(async ({ context, params }) => {
+      return service.getOneByUserId({
+        userId: context.claims.sub,
+        id: params.id,
+      });
+    }),
   );
 
   return router;

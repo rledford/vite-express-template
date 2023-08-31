@@ -10,13 +10,13 @@ export interface NoteModule {
 
 export type Deps = {
   db: DatabaseConnection;
-  jwtGuard: Middleware;
+  setClaimsContext: Middleware;
 };
 
-export const noteModule = ({ db, jwtGuard }: Deps) => {
+export const noteModule = ({ db, setClaimsContext }: Deps) => {
   const repository = noteRepository({ db });
   const service = noteService({ repository });
-  const controller = noteController({ service, jwtGuard });
+  const controller = noteController({ service, setClaimsContext });
 
   return {
     controller,

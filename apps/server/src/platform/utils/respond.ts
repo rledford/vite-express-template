@@ -10,7 +10,15 @@ type WrappedHandler = (
   next: NextFunction,
 ) => Promise<void>;
 
-export const withResData =
+/**
+ * Parses the result of the `handler` with the provided `schema` and sends
+ * `200` status with `json` data.
+ *
+ * Responds with `404` and `json` error if result is undefined.
+ *
+ * Responds with `500` if schema parsing fails
+ */
+export const respondJSON =
   (schema: z.AnyZodObject): WithResponse =>
   (handler) =>
   async (req, res, next) => {
@@ -29,7 +37,7 @@ export const withResData =
     }
   };
 
-export const withResEmpty: WithResponse =
+export const respondEmpty: WithResponse =
   (handler) => async (req, res, next) => {
     try {
       await handler(req, res);

@@ -1,9 +1,9 @@
 import { NotFoundError } from '@/platform/error';
-import { notFoundMiddleware } from './not-found.middleware';
+import { notFoundHandler } from './not-found-handler';
 import { requestHandlerSpy } from '@/test/spies';
 
-describe('notFoundMiddleware', () => {
-  const middleware = notFoundMiddleware();
+describe('notFoundHandler', () => {
+  const middleware = notFoundHandler();
 
   it('should return a middleware function', () => {
     expect(middleware).toEqual(expect.any(Function));

@@ -1,13 +1,13 @@
 import { requestHandlerSpy } from '@/test/spies';
 import { Middleware } from '../types';
-import { requestContextMiddleware } from './request-context.middleware';
+import { requestContext } from './request-context';
 import { RequestContext } from '../context';
 
-describe('requestContextMiddleware', () => {
+describe('requestContext', () => {
   let middleware: Middleware;
 
   beforeEach(() => {
-    middleware = requestContextMiddleware();
+    middleware = requestContext();
   });
 
   it('should set the context on the request', () => {

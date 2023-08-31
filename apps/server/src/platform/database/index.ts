@@ -1,12 +1,13 @@
 import pg from 'pg';
 import { CamelCasePlugin, Kysely, PostgresDialect } from 'kysely';
-import { DatabaseConfig } from '../configuration/config.schema';
 import { Logger } from '../logger';
-import { NoteTable, UserTable } from './tables';
+import { DatabaseConfig } from '../configuration/config.schema';
+import { NotesTable, UserProfilesTable, UserCredentialsTable } from './tables';
 
 export interface DatabaseSchema {
-  user: UserTable;
-  note: NoteTable;
+  user_credentials: UserCredentialsTable;
+  user_profiles: UserProfilesTable;
+  notes: NotesTable;
 }
 
 export type DatabaseConnection = Kysely<DatabaseSchema>;

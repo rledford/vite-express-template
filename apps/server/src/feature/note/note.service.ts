@@ -1,10 +1,14 @@
-import { Note } from '@/platform/database/tables';
+import { NoteEntity } from '@/platform/database/tables';
 import { NoteRepository } from './note.repository';
-import { CreateNote } from './note.schema';
+import type { CreateNoteDTO } from './note.dto';
 
 export interface NoteService {
-  create: (dto: CreateNote) => Promise<Note | undefined>;
-  getAllByUserId: (userId: number) => Promise<Note[]>;
+  create: (dto: CreateNoteDTO) => Promise<NoteEntity | undefined>;
+  getAllByUserId: (userId: string) => Promise<NoteEntity[]>;
+  getOneByUserId: (params: {
+    userId: string;
+    id: string;
+  }) => Promise<NoteEntity | undefined>;
   update: () => Promise<undefined>;
 }
 
@@ -19,6 +23,7 @@ export const noteService = ({ repository }: Deps): NoteService => {
       return repository.insert(dto);
     },
     getAllByUserId: (userId) => repository.findByUserId(userId),
+    getOneByUserId: (params) => repository.findOneByUserId(params),
     update: async () => undefined,
   };
 };

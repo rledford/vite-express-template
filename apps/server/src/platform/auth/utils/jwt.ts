@@ -1,25 +1,25 @@
 import jwt from 'jsonwebtoken';
-import { JWT, TokenClaims, TokenClaimsSchema } from '../auth.schema';
+import { type JWT, type Claims, ClaimsSchema } from '../auth.schema';
 
 export type JWTConfig = { secret: string };
 export type CreateJWTSigner = (config: JWTConfig) => JWTSigner;
-export type JWTSigner = (payload: TokenClaims) => JWT;
+export type JWTSigner = (payload: Claims) => JWT;
 
 export const jwtSigner: CreateJWTSigner =
   ({ secret }): JWTSigner =>
-  (payload: TokenClaims) => {
-    return jwt.sign(TokenClaimsSchema.parse(payload), secret, {
+  (payload: Claims) => {
+    return jwt.sign(ClaimsSchema.parse(payload), secret, {
       expiresIn: '1h',
     });
   };
 
 export type CreateJWTVerifier = (config: JWTConfig) => JWTVerifier;
-export type JWTVerifier = (token: string) => TokenClaims;
+export type JWTVerifier = (token: string) => Claims;
 
 export const jwtVerifier: CreateJWTVerifier =
   ({ secret }): JWTVerifier =>
   (token) => {
-    return TokenClaimsSchema.parse(jwt.verify(token, secret));
+    return ClaimsSchema.parse(jwt.verify(token, secret));
   };
 
 export const jwtPair = ({ secret }: JWTConfig) => {

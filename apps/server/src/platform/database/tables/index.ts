@@ -1,2 +1,3 @@
-export * from './note.table';
-export * from './user.table';
+export * from './notes.table';
+export * from './user-credentials.table';
+export * from './user-profiles.table';

@@ -1,11 +1,11 @@
-import { BasicCredentials, TokenClaims } from '../auth';
+import type { BasicAuth, Claims } from '../auth';
 import { InternalError } from '../error';
 import { RequestContext } from './request.context';
 
 describe('RequestContext', () => {
-  const mockClaims: TokenClaims = { id: 1, username: 'user' };
-  const mockCredentials: BasicCredentials = {
-    username: 'user',
+  const mockClaims: Claims = { sub: 'mock' };
+  const mockBasicAuth: BasicAuth = {
+    email: 'user@dev.local',
     password: 'password',
   };
   let context: RequestContext;
@@ -23,12 +23,12 @@ describe('RequestContext', () => {
     expect(() => context.claims).toThrowError(expect.any(InternalError));
   });
 
-  it('should allow getting credentials after they are set', () => {
-    context.credentials = mockCredentials;
-    expect(context.credentials).toEqual(mockCredentials);
+  it('should allow getting auth after they are set', () => {
+    context.auth = mockBasicAuth;
+    expect(context.auth).toEqual(mockBasicAuth);
   });
 
-  it('should throw if attempting to get credentials that are not set', () => {
-    expect(() => context.credentials).toThrow(expect.any(InternalError));
+  it('should throw if attempting to get auth that are not set', () => {
+    expect(() => context.auth).toThrow(expect.any(InternalError));
   });
 });

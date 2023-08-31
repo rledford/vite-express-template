@@ -1,56 +1,36 @@
 import { DatabaseConnection } from '@/platform/database';
 import { Middleware } from '@/platform/types';
 import { userRepository } from './user.repository';
-import { currentUserService, userService } from './services';
-import {
-  CurrentUserController,
-  currentUserController,
-  userController,
-} from './controllers';
-import { Router } from 'express';
+import { userService } from './user.service';
+import { UserController, userController } from './user.controller';
 import { JWTSigner } from '@/platform/auth';
 
-export * from './user.schema';
+export * from './user.dto';
 
 export interface UserModule {
-  controller: CurrentUserController;
-}
-
-export interface CurrentUserModule {
-  controller: Router;
+  controller: UserController;
 }
 
 type UserDeps = {
   db: DatabaseConnection;
-  jwtGuard: Middleware;
+  sign: JWTSigner;
+  setClaimsContext: Middleware;
+  setAuthContext: Middleware;
 };
 
-export const userModule = ({ db, jwtGuard }: UserDeps) => {
-  const repository = userRepository({ db });
-  const service = userService({ repository });
-  const controller = userController({ service, jwtGuard });
-
-  return {
-    controller,
-  };
-};
-
-type CurrentUserDeps = {
-  db: DatabaseConnection;
-  jwtGuard: Middleware;
-  jwtSign: JWTSigner;
-  basicGuard: Middleware;
-};
-
-export const currentUserModule = ({
+export const userModule = ({
   db,
-  jwtGuard,
-  basicGuard,
-  jwtSign,
-}: CurrentUserDeps) => {
+  sign,
+  setClaimsContext,
+  setAuthContext,
+}: UserDeps) => {
   const repository = userRepository({ db });
-  const service = currentUserService({ repository, sign: jwtSign });
-  const controller = currentUserController({ service, jwtGuard, basicGuard });
+  const service = userService({ repository, sign });
+  const controller = userController({
+    service,
+    setClaimsContext,
+    setAuthContext,
+  });
 
   return {
     controller,

@@ -6,14 +6,14 @@ import {
   Updateable,
 } from 'kysely';
 
-export interface NoteTable {
-  id: Generated<number>;
-  userId: number;
+export interface NotesTable {
+  id: Generated<string>;
+  userId: string;
   content: string;
   createdAt: ColumnType<Date, string | undefined, never>;
   updateAt: ColumnType<Date, string | undefined, never>;
 }
 
-export type Note = Selectable<NoteTable>;
-export type NewNote = Insertable<NoteTable>;
-export type NoteUpdate = Updateable<NoteTable>;
+export type NoteEntity = Selectable<NotesTable>;
+export type NewNoteEntity = Insertable<NotesTable>;
+export type NoteEntityUpdate = Updateable<NotesTable>;

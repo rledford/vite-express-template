@@ -4,7 +4,7 @@ import { RequestContext } from '../context';
 /**
  * Exposes a RequestContext to subsequent middlewares to get or set context data
  */
-export const requestContextMiddleware =
+export const requestContext =
   () => (req: Request, res: Response, next: NextFunction) => {
     req.context = new RequestContext();
 

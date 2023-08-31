@@ -2,10 +2,11 @@ import { Kysely, sql } from 'kysely';
 
 export async function up(db: Kysely<any>): Promise<void> {
   await db.schema
-    .createTable('user')
-    .addColumn('id', 'serial', (col) => col.primaryKey())
+    .createTable('user_profiles')
+    // id is not auto-generated and is intended to be inserted using
+    // the authenticated account claims when a client creates their user
+    .addColumn('id', 'uuid', (col) => col.primaryKey().notNull())
     .addColumn('username', 'varchar(255)', (col) => col.notNull())
-    .addColumn('hash', 'varchar(255)', (col) => col.notNull())
     .addColumn('created_at', 'timestamp', (col) =>
       col.defaultTo(sql`now()`).notNull(),
     )
@@ -15,11 +16,12 @@ export async function up(db: Kysely<any>): Promise<void> {
     .execute();
 
   await db.schema
-    .alterTable('user')
-    .addUniqueConstraint('user_username_unique', ['username'])
+    .createIndex('user_profiles_username_index')
+    .on('user_profiles')
+    .column('username')
     .execute();
 }
 
 export async function down(db: Kysely<any>): Promise<void> {
-  await db.schema.dropTable('user').execute();
+  await db.schema.dropTable('user_profiles').execute();
 }

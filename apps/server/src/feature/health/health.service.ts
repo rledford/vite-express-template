@@ -1,7 +1,7 @@
+import type { HealthDTO } from './health.dto';
+
 export interface HealthService {
-  getHealth: () => Promise<{
-    uptime: number;
-  }>;
+  getHealth: () => Promise<HealthDTO>;
 }
 
 export const healthService = (): HealthService => ({

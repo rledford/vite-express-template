@@ -1,10 +1,9 @@
-import { Router } from 'express';
 import { HealthService, healthService } from './health.service';
-import { healthController } from './health.controller';
+import { HealthController, healthController } from './health.controller';
 
 interface HealthModule {
   service: HealthService;
-  controller: Router;
+  controller: HealthController;
 }
 
 export const healthModule = (): HealthModule => {

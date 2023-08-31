@@ -1,17 +1,16 @@
 import { NextFunction, Request, Response } from 'express';
-import { TokenClaims } from '../auth';
-import { jwtMiddleware } from './jwt.middleware';
+import type { Claims } from '../auth';
+import { jwtClaimsContext } from './jwt-claims-context';
 import { requestHandlerSpy } from '@/test/spies';
 import { UnauthorizedError } from '../error';
 import { RequestContext } from '../context';
 
-describe('jwtMiddleware', () => {
+describe('jwtClaimsContext', () => {
   const verifySpy = vi.fn();
-  const middleware = jwtMiddleware({ verify: verifySpy });
+  const middleware = jwtClaimsContext({ verify: verifySpy });
 
-  const mockClaims: TokenClaims = {
-    id: 1,
-    username: 'mock',
+  const mockClaims: Claims = {
+    sub: 'mock',
   };
 
   let req: Request;

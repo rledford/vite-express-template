@@ -1,53 +1,87 @@
 import { DatabaseConnection } from '@/platform/database';
-import { NewUser, User } from '@/platform/database/tables';
+import {
+  UserCredentialEntity,
+  UserProfileEntity,
+  UserProfileEntityUpdate,
+} from '@/platform/database/tables';
+import { UserLoginDTO, UserRegistrationDTO } from './user.dto';
+import { InternalError } from '@/platform/error';
 
 type Deps = {
   db: DatabaseConnection;
 };
 
 export interface UserRepository {
-  insert: (registration: NewUser) => Promise<User | undefined>;
-  find: () => Promise<Array<User>>;
-  findById: (id: User['id']) => Promise<User | undefined>;
-  findByCredentials: (
-    credentials: Pick<User, 'username' | 'hash'>,
-  ) => Promise<User | undefined>;
-  count: () => Promise<number>;
+  register: (
+    registration: UserRegistrationDTO,
+  ) => Promise<Pick<UserCredentialEntity, 'userId'> | undefined>;
+  findByCredential: (
+    login: UserLoginDTO,
+  ) => Promise<Pick<UserCredentialEntity, 'userId'> | undefined>;
+  updateProfile: (params: {
+    id: string;
+    updates: UserProfileEntityUpdate;
+  }) => Promise<UserProfileEntity | undefined>;
+  findProfiles: () => Promise<Array<UserProfileEntity>>;
+  findProfileById: (
+    id: UserProfileEntity['id'],
+  ) => Promise<UserProfileEntity | undefined>;
+  countProfiles: () => Promise<number>;
 }
 
 export const userRepository = ({ db }: Deps): UserRepository => {
   return {
-    insert: async (newUser) => {
+    register: async ({ credentials, profile }) => {
+      return db.transaction().execute(async (trx) => {
+        const userCredential = await trx
+          .insertInto('user_credentials')
+          .values(credentials)
+          .returning('userId')
+          .executeTakeFirst();
+
+        if (!userCredential)
+          throw new InternalError('Failed to create new user credential');
+
+        await trx
+          .insertInto('user_profiles')
+          .values({ ...profile, id: userCredential.userId })
+          .execute();
+
+        return userCredential;
+      });
+    },
+    findByCredential: async ({ email, password }) => {
       return db
-        .insertInto('user')
-        .values(newUser)
+        .selectFrom('user_credentials')
+        .select(['id', 'userId'])
+        .where('email', '=', email)
+        .where('password', '=', password)
+        .executeTakeFirst();
+    },
+    updateProfile: async ({ id, updates }) => {
+      return db
+        .updateTable('user_profiles')
+        .set(updates)
+        .where('id', '=', id)
         .returningAll()
         .executeTakeFirst();
     },
-    find: () => {
-      return db.selectFrom('user').selectAll().execute();
+    findProfiles: () => {
+      return db.selectFrom('user_profiles').selectAll().execute();
     },
-    findById: (id) => {
+    findProfileById: (id) => {
       return db
-        .selectFrom('user')
+        .selectFrom('user_profiles')
         .selectAll()
         .where('id', '=', id)
         .executeTakeFirst();
     },
-    findByCredentials: async ({ username, hash }) => {
-      return db
-        .selectFrom('user')
-        .selectAll()
-        .where('username', '=', username)
-        .where('hash', '=', hash)
-        .executeTakeFirst();
-    },
-    count: async () => {
+    countProfiles: async () => {
       const count = await db
-        .selectFrom('user')
-        .select((eb) => eb.fn.count('id').as('num_users'))
+        .selectFrom('user_profiles')
+        .select((eb) => eb.fn.count('id').as('numUsers'))
         .executeTakeFirst();
-      return Number(count?.num_users || 0);
+      return Number(count?.numUsers || 0);
     },
   };
 };

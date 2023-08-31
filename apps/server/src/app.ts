@@ -6,18 +6,18 @@ import { PlatformConfig } from './platform/configuration';
 import { database } from './platform/database';
 import { errorFormatter } from './platform/utils/error-formatter';
 import {
-  accessLoggerMiddleware,
-  basicMiddleware,
-  errorMiddleware,
-  jwtMiddleware,
-  notFoundMiddleware,
-  requestContextMiddleware,
+  accessLogger,
+  notFoundHandler,
+  requestContext,
+  errorHandler,
+  jwtClaimsContext,
+  basicAuthContext,
 } from './platform/middleware';
 import { createLogger } from './platform/logger';
 import { healthModule } from './feature/health';
-import { currentUserModule, userModule } from './feature/user';
-import { jwtPair } from './platform/auth';
+import { userModule } from './feature/user';
 import { noteModule } from './feature/note';
+import { jwtPair } from './platform/auth';
 
 type Deps = {
   config: PlatformConfig;
@@ -27,9 +27,9 @@ export const initApp = async ({ config }: Deps) => {
   const app = express();
   const server = new Server(app);
   const logger = createLogger(config.app.logLevel);
-  const jwt = jwtPair({ secret: config.app.jwtSecret });
-  const jwtGuard = jwtMiddleware({ verify: jwt.verify });
-  const basicGuard = basicMiddleware();
+  const { sign, verify } = jwtPair({ secret: config.app.jwtSecret });
+  const setClaimsContext = jwtClaimsContext({ verify });
+  const setAuthContext = basicAuthContext();
 
   logger.info(`Vite Express Template [ ${config.app.mode} ]`);
 
@@ -37,31 +37,29 @@ export const initApp = async ({ config }: Deps) => {
 
   await db.connect();
 
-  app.use(requestContextMiddleware());
+  app.use(requestContext());
   app.use(cors());
   app.use(bodyParser.json());
   app.use(bodyParser.urlencoded({ extended: true }));
-  app.use(accessLoggerMiddleware());
+  app.use(accessLogger());
 
   const health = healthModule();
-  const user = userModule({ db: db.connection, jwtGuard });
-  const currentUser = currentUserModule({
+  const user = userModule({
     db: db.connection,
-    jwtGuard,
-    basicGuard,
-    jwtSign: jwt.sign,
+    sign,
+    setClaimsContext,
+    setAuthContext,
   });
-  const note = noteModule({ db: db.connection, jwtGuard });
+  const note = noteModule({ db: db.connection, setClaimsContext });
 
-  app.use('/health', health.controller);
-  app.use('/', currentUser.controller);
-  app.use('/users', user.controller);
-  app.use('/notes', note.controller);
+  app.use(health.controller);
+  app.use(user.controller);
+  app.use(note.controller);
 
-  app.use(notFoundMiddleware());
+  app.use(notFoundHandler());
 
   app.use(
-    errorMiddleware({
+    errorHandler({
       formatError: errorFormatter({
         logger,
         scrubInternal: config.app.isProd,
